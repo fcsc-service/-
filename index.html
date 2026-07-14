@@ -1,0 +1,1620 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>产品要素表</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #edf2f9;
+      color: #151515;
+      font-family: "Microsoft YaHei", "SimSun", Arial, sans-serif;
+      font-size: 14px;
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    .sheet-wrap {
+      --sheet-width: 1800px;
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 20px;
+      padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+    }
+
+    .toolbar {
+      width: var(--sheet-width);
+      max-width: 100%;
+      margin: 0 auto 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid rgba(109, 120, 144, .28);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .76);
+      box-shadow: 0 8px 24px rgba(36, 58, 104, .1);
+    }
+
+    .save-button {
+      height: 36px;
+      padding: 0 16px;
+      border: 1px solid #1f6feb;
+      border-radius: 6px;
+      background: #1f6feb;
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+
+    .save-button:hover {
+      background: #1a5fc8;
+      border-color: #1a5fc8;
+      box-shadow: 0 6px 14px rgba(31, 111, 235, .22);
+      transform: translateY(-1px);
+    }
+
+    .save-button:active {
+      transform: translateY(0);
+    }
+
+    .save-button.secondary {
+      border-color: #b8c5d8;
+      background: #fff;
+      color: #24466f;
+    }
+
+    .save-button.secondary:hover {
+      border-color: #8fa5c4;
+      background: #f6f9ff;
+      box-shadow: 0 6px 14px rgba(36, 58, 104, .12);
+    }
+
+    table.sheet {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      background: #fff;
+      border: 1px solid #6d7890;
+      box-shadow: 0 12px 32px rgba(36, 58, 104, .16);
+    }
+
+    .sheet-viewport {
+      width: var(--sheet-width);
+      max-width: 100%;
+      margin: 0 auto;
+      overflow-x: auto;
+      overflow-y: visible;
+      touch-action: pan-y;
+    }
+
+    .sheet-scale {
+      width: 100%;
+      transform-origin: 0 0;
+    }
+
+    .sheet-viewport.is-pinching {
+      user-select: none;
+    }
+
+    .sheet-scale table.sheet {
+      transform-origin: 0 0;
+    }
+
+    col.c1 { width: 10.8%; }
+    col.c2 { width: 12.8%; }
+    col.c3 { width: 12.8%; }
+    col.c4 { width: 12.8%; }
+    col.c5 { width: 10.8%; }
+    col.c6 { width: 12.8%; }
+    col.c7 { width: 12.8%; }
+    col.c8 { width: 14.4%; }
+
+    th,
+    td {
+      border: 1px solid #6f7785;
+      height: 28px;
+      padding: 3px 6px;
+      vertical-align: middle;
+      line-height: 1.35;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .title {
+      height: 78px;
+      background: #91aad8;
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 0;
+    }
+
+    .section {
+      height: 34px;
+      background: #91aad8;
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .label {
+      background: #b9c9e6;
+      font-weight: 600;
+    }
+
+    .subhead {
+      background: #dce5f5;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .note {
+      color: #e60000;
+      font-weight: 700;
+    }
+
+    .muted {
+      color: #333;
+      font-size: 13px;
+    }
+
+    .small {
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .tall td,
+    .tall th {
+      height: 46px;
+    }
+
+    .xl td,
+    .xl th {
+      height: 82px;
+    }
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: 30px;
+      white-space: nowrap;
+      overflow-wrap: break-word;
+    }
+
+    td label {
+      max-width: 100%;
+      flex-wrap: nowrap;
+      vertical-align: middle;
+    }
+
+    td.center label {
+      justify-content: center;
+    }
+
+    td[contenteditable="true"] br {
+      line-height: 1.45;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 72px;
+      height: 22px;
+      border: 0;
+      background: transparent;
+      text-align: center;
+      font: inherit;
+      outline: none;
+    }
+
+    textarea {
+      resize: none;
+      overflow: hidden;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      margin: 0 2px 0 0;
+      vertical-align: middle;
+      accent-color: #1f6feb;
+      touch-action: manipulation;
+    }
+
+    .line-input {
+      width: 100%;
+      min-width: 100%;
+      height: auto;
+      min-height: 32px;
+      display: block;
+      text-align: left;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .mini-input {
+      width: 52px;
+      max-width: 100%;
+      min-width: 0;
+      height: auto;
+      min-height: 22px;
+      display: inline-block;
+      padding: 1px 3px;
+      border-bottom: 1px solid transparent;
+      line-height: 1.35;
+      text-align: center;
+      overflow-y: hidden;
+      overflow-wrap: anywhere;
+      word-break: break-all;
+      white-space: pre-wrap;
+      vertical-align: middle;
+    }
+
+    .has-mini-input,
+    label:has(.mini-input) {
+      display: inline;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .mini-input:focus,
+    .line-input:focus {
+      outline: 2px solid #2f73ff;
+      background: #fff;
+    }
+
+    .mini-input.amount-input {
+      width: 76px;
+    }
+
+    .mini-input.rate-input {
+      width: 46px;
+    }
+
+    .mini-input.day-input {
+      width: 58px;
+    }
+
+    .mini-input.month-input {
+      width: 56px;
+    }
+
+    .distribution-default-input {
+      width: 88px;
+      min-width: 88px;
+    }
+
+    .distribution-disabled {
+      background: #f3f5f8;
+      color: #777;
+      cursor: not-allowed;
+    }
+
+    .distribution-disabled label {
+      cursor: not-allowed;
+    }
+
+    .distribution-default-input:disabled {
+      color: #777;
+      cursor: not-allowed;
+    }
+
+    .inline-blank {
+      display: inline-block;
+      min-width: 48px;
+      flex: 0 0 auto;
+      min-height: 18px;
+      padding: 0 3px;
+      margin: 0 2px;
+      vertical-align: baseline;
+      cursor: text;
+      outline-offset: 1px;
+      border-bottom: 1px solid transparent;
+      overflow-wrap: break-word;
+    }
+
+    .cell-editor {
+      display: block;
+      width: 100%;
+      min-height: 22px;
+      outline-offset: -2px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      cursor: text;
+    }
+
+    .cell-editor:empty::before {
+      content: "\00a0";
+    }
+
+    .fee-base label {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: start;
+      column-gap: 4px;
+      max-width: 100%;
+      min-width: 0;
+      margin-right: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+    .fee-base {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .fee-base-unit {
+      display: inline;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .fee-base-text {
+      min-width: 0;
+    }
+
+    .fee-pay {
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .performance-choice label {
+      display: flex;
+      width: 100%;
+      margin-right: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .inline-blank:focus {
+      outline: 2px solid #2f73ff;
+      background: #fff;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 42px;
+      padding: 0 8px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .fill {
+      min-height: 22px;
+    }
+
+    td:has(input[type="text"]),
+    td[contenteditable="true"] {
+      cursor: text;
+    }
+
+    td[contenteditable="true"]:not(.label):not(.subhead):hover {
+      background: #f8fbff;
+    }
+
+    td[contenteditable="true"]:focus {
+      outline: 2px solid #2f73ff;
+      outline-offset: -2px;
+      background: #fff;
+    }
+
+    td.selected-cell {
+      outline: 2px solid #2f73ff;
+      outline-offset: -2px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgba(47, 115, 255, .2);
+    }
+
+    .locked-help-cell {
+      cursor: help;
+    }
+
+    .locked-help-cell:hover,
+    .locked-help-cell:focus {
+      outline: 2px solid #2f73ff;
+      outline-offset: -2px;
+    }
+
+    .cell-tooltip {
+      position: fixed;
+      z-index: 50;
+      max-width: 320px;
+      padding: 8px 10px;
+      border: 1px solid #2f5f9f;
+      border-radius: 6px;
+      background: #fff;
+      color: #151515;
+      box-shadow: 0 8px 24px rgba(36, 58, 104, .2);
+      font-size: 13px;
+      line-height: 1.5;
+      pointer-events: none;
+    }
+
+    .cell-tooltip[hidden] {
+      display: none;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .sheet-wrap {
+        padding: 0;
+      }
+
+      .toolbar {
+        display: none;
+      }
+
+      .cell-tooltip {
+        display: none;
+      }
+
+      .sheet-viewport {
+        width: 100%;
+      }
+
+      table.sheet {
+        width: 100%;
+        box-shadow: none;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        font-size: 16px;
+      }
+
+      .sheet-wrap {
+        padding: 10px;
+        padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+      }
+
+      .toolbar {
+        margin-bottom: 8px;
+        padding: 8px;
+      }
+
+      .save-button {
+        min-height: 44px;
+        padding: 0 14px;
+        font-size: 16px;
+      }
+
+      table.sheet {
+        width: 100%;
+        font-size: 12px;
+      }
+
+      col.c1 { width: 10.8%; }
+      col.c2 { width: 12.8%; }
+      col.c3 { width: 12.8%; }
+      col.c4 { width: 12.8%; }
+      col.c5 { width: 10.8%; }
+      col.c6 { width: 12.8%; }
+      col.c7 { width: 12.8%; }
+      col.c8 { width: 14.4%; }
+
+      th,
+      td {
+        height: auto;
+        min-height: 28px;
+        padding: 3px 2px;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      .title {
+        height: auto;
+        padding: 12px 4px;
+        font-size: 18px;
+      }
+
+      .section {
+        height: auto;
+        padding: 8px 4px;
+        font-size: 14px;
+      }
+
+      .small,
+      .muted {
+        font-size: 11px;
+      }
+
+      label {
+        gap: 3px;
+        max-width: 100%;
+        margin-right: 8px;
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      td label {
+        flex-wrap: wrap;
+      }
+
+      input[type="radio"],
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 auto;
+      }
+
+      .inline-blank {
+        min-width: 24px;
+        padding: 0 2px;
+        overflow-wrap: anywhere;
+      }
+
+      .mini-input {
+        min-width: 36px;
+        min-height: 32px;
+        padding: 4px 3px;
+        line-height: 1.45;
+        touch-action: manipulation;
+      }
+
+      .cell-editor {
+        min-height: 32px;
+        padding: 4px 2px;
+        font-size: 16px;
+        line-height: 1.45;
+      }
+
+      .fee-pay {
+        font-size: 11px;
+      }
+
+      .performance-choice {
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .performance-choice label {
+        align-items: flex-start;
+        gap: 2px;
+        margin-bottom: 6px;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      textarea {
+        font-size: 16px;
+      }
+
+      .line-input {
+        min-height: 36px;
+        line-height: 1.45;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet-wrap">
+    <div class="toolbar">
+      <button class="save-button secondary" type="button" id="saveHtmlButton">保存HTML</button>
+      <button class="save-button" type="button" id="saveAsHtmlButton">另存为</button>
+    </div>
+    <form>
+      <div class="sheet-viewport" id="sheetViewport">
+      <div class="sheet-scale" id="sheetScale">
+      <table class="sheet" aria-label="产品要素表">
+        <colgroup>
+          <col class="c1">
+          <col class="c2">
+          <col class="c3">
+          <col class="c4">
+          <col class="c5">
+          <col class="c6">
+          <col class="c7">
+          <col class="c8">
+        </colgroup>
+        <tr>
+          <th class="title" colspan="8">产品要素表</th>
+        </tr>
+        <tr>
+          <th class="section" colspan="8">产品基本信息</th>
+        </tr>
+        <tr>
+          <td class="label">产品名称</td>
+          <td colspan="7"><input class="line-input" type="text" aria-label="产品名称"></td>
+        </tr>
+        <tr>
+          <td class="label">拟备案产品类型</td>
+          <td colspan="3">
+            <label><input type="radio" name="productType" checked>固定收益类</label>
+            <label><input type="radio" name="productType">权益类</label>
+            <label><input type="radio" name="productType">混合类</label>
+            <label><input type="radio" name="productType">期货和衍生品类</label>
+            <label><input type="radio" name="productType">私募证券投资母基金</label>
+          </td>
+          <td class="label">产品预备案编码</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="产品预备案编码"></td>
+        </tr>
+        <tr>
+          <td class="label">管理人名称</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="管理人名称"></td>
+          <td class="label">管理人登记编号</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="管理人登记编号"></td>
+        </tr>
+        <tr>
+          <td class="label">管理人银行账号</td>
+          <td colspan="3"><input class="line-input digits-only" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="管理人银行账号"></td>
+          <td class="label">管理人银行账号开户行</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="开户行"></td>
+        </tr>
+        <tr>
+          <td class="label">托管人</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="托管人"></td>
+          <td class="label">投资顾问 <span class="note">（如有）</span></td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="投资顾问"></td>
+        </tr>
+        <tr>
+          <td class="label">份额登记机构</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="份额登记机构"></td>
+          <td class="label">代销机构 <span class="note">（如有）</span></td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="代销机构"></td>
+        </tr>
+        <tr>
+          <td class="label">基金服务机构</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="基金服务机构"></td>
+          <td class="label">证券经纪商 <span class="note">（如有）</span></td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="证券经纪商"></td>
+        </tr>
+        <tr>
+          <td class="label">直销募集账户监督机构</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="直销募集账户监督机构"></td>
+          <td class="label">期货经纪商 <span class="note">（如有）</span></td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="期货经纪商"></td>
+        </tr>
+        <tr>
+          <td class="label">运作方式</td>
+          <td colspan="3">
+            <label><input type="radio" name="operation" checked>定期开放</label>
+            <label><input type="radio" name="operation">封闭运作</label>
+          </td>
+          <td class="label">存续期限</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="存续期限"></td>
+        </tr>
+        <tr class="tall">
+          <td class="label">份额分类<br><span class="note">（如分类管理人确认）</span></td>
+          <td colspan="2">
+            <label><input type="radio" name="shareClass" checked>不分类</label>
+            <label><input type="radio" name="shareClass">分类</label>
+          </td>
+          <td colspan="5" class="small">
+            A类：除B类份额之外的其他合格投资者<br>
+            B类：基金管理人、管理人内部员工及管理人发行或担任投资顾问的私募证券投资基金
+          </td>
+        </tr>
+        <tr>
+          <td class="label">风险收益特征</td>
+          <td><label><input type="radio" name="risk" checked>R3</label></td>
+          <td><label><input type="radio" name="risk">R4</label></td>
+          <td><label><input type="radio" name="risk">R5</label></td>
+          <td class="label">投资者风险承受能力</td>
+          <td><label><input type="checkbox" name="capacity">C3</label></td>
+          <td><label><input type="checkbox" name="capacity">C4</label></td>
+          <td><label><input type="checkbox" name="capacity">C5</label></td>
+        </tr>
+
+        <tr>
+          <th class="section" colspan="8">产品募集信息</th>
+        </tr>
+        <tr>
+          <td class="label">募集方式</td>
+          <td colspan="3">
+            <label><input type="radio" name="raiseMode" checked>仅直销</label>
+            <label><input type="radio" name="raiseMode">直销+代销</label>
+          </td>
+          <td class="label">代销机构（可填多个）</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="代销机构可填多个"></td>
+        </tr>
+        <tr>
+          <td class="label">首次投资最低金额</td>
+          <td colspan="2">
+            <label><input type="radio" name="firstMin" checked>100万</label>
+            <label><input type="radio" name="firstMin">其他金额：【<input class="mini-input" type="text">】万</label>
+          </td>
+          <td class="label">追加认购金额</td>
+          <td>
+            <label><input type="radio" name="addSub" checked>1万</label>
+          </td>
+          <td>
+            <label><input type="radio" name="addSub">10万</label>
+          </td>
+          <td colspan="2">
+            <label><input type="radio" name="addSub">其他金额：【<input class="mini-input" type="text">】万</label>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">认购费</td>
+          <td colspan="2">
+            <label><input type="radio" name="subFee" checked>不收取</label>
+            <label><input type="radio" name="subFee">收取：【<input class="mini-input" type="text">】%</label>
+          </td>
+          <td class="label">认购费归属</td>
+          <td colspan="4" class="center">募集机构</td>
+        </tr>
+        <tr>
+          <td class="label">募集期利息</td>
+          <td colspan="2">
+            <label><input type="radio" name="interest" checked>计入基金资产</label>
+            <label><input type="radio" name="interest">结转为投资者份额</label>
+          </td>
+          <td class="label">是否实施回访制度</td>
+          <td colspan="4">
+            <label><input type="radio" name="callback" checked>是（条款组合同表达中核确认）</label>
+            <label><input type="radio" name="callback">否</label>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">开放日 <span class="note">（周开不可顺延）</span></td>
+          <td colspan="2"><input class="line-input" type="text" aria-label="开放日"></td>
+          <td class="label">锁定期</td>
+          <td colspan="4" class="small">
+            <label><input type="radio" name="lock">无（需设置阶梯赎回费）</label>
+            <label><input type="radio" name="lock">自份额注册日起不满【<input class="mini-input" type="text">】个月不得赎回，管理人员及员工不得低于6个月</label>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">申购费</td>
+          <td colspan="2">
+            <label><input type="radio" name="buyFee" checked>不收取</label>
+            <label><input type="radio" name="buyFee">收取：【<input class="mini-input" type="text">】%</label>
+          </td>
+          <td class="label">申购费归属</td>
+          <td colspan="4" class="center">募集机构</td>
+        </tr>
+        <tr>
+          <td class="label">首次申购最低金额</td>
+          <td colspan="2">
+            <label><input type="radio" name="firstBuy" checked>100万</label>
+            <label><input type="radio" name="firstBuy">其他金额：【<input class="mini-input" type="text">】万</label>
+          </td>
+          <td class="label">追加申购金额</td>
+          <td>
+            <label><input type="radio" name="addBuy">1万</label>
+          </td>
+          <td>
+            <label><input type="radio" name="addBuy">10万</label>
+          </td>
+          <td colspan="2">
+            <label><input type="radio" name="addBuy">其他金额：【<input class="mini-input" type="text">】万</label>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">赎回费</td>
+          <td colspan="2">
+            <label><input type="radio" name="redeemFee" checked>不收取</label>
+            <label><input type="radio" name="redeemFee">收取：【<input class="mini-input" type="text">】%</label>
+          </td>
+          <td class="label">赎回费归属</td>
+          <td colspan="4" class="center">基金财产</td>
+        </tr>
+        <tr>
+          <td class="label">收费方式（赎回）</td>
+          <td colspan="7" class="small">
+            <label><input type="radio" name="redeemMethod">赎回费率：【<input class="mini-input" type="text">】%</label>
+            <label><input type="radio" name="redeemMethod" checked>分段收取：基金份额持有期限低于【<input class="mini-input" type="text">】天的，赎回费率为【<input class="mini-input" type="text">】%，基金份额持有期在【<input class="mini-input" type="text">】天及以上的，赎回费率为【<input class="mini-input" type="text">】%</label>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">巨额赎回认定</td>
+          <td colspan="7" class="small">
+            单个开放日中，净赎回申请的份额（赎回总份额扣除申购总份额后的余额）超过基金上一日总份额的【<input class="mini-input" type="text">】%时，即认为本基金发生了巨额赎回
+          </td>
+        </tr>
+
+        <tr>
+          <th class="section" colspan="8">产品投资信息</th>
+        </tr>
+        <tr>
+          <td class="label">投资目标</td>
+          <td colspan="7" aria-label="投资目标"></td>
+        </tr>
+        <tr>
+          <td class="label">投资范围</td>
+          <td colspan="7" aria-label="投资范围"></td>
+        </tr>
+        <tr>
+          <td class="label">资产配置比例</td>
+          <td colspan="7"><span class="note">注：需与产品类型匹配</span></td>
+        </tr>
+        <tr>
+          <td class="label">投资策略</td>
+          <td colspan="7" aria-label="投资策略"></td>
+        </tr>
+        <tr>
+          <td class="label">投资限制</td>
+          <td colspan="7"><span class="note">注：包含与投资范围匹配的集中度、杠杆等</span></td>
+        </tr>
+        <tr>
+          <td class="label">投资经理</td>
+          <td colspan="7"><span class="note">注：如有多名投资经理的，应当披露设置多名投资经理的合理性、管理方式、分工安排、调整机制等内容</span></td>
+        </tr>
+        <tr>
+          <td class="label">业绩比较基准</td>
+          <td colspan="3">
+            <label><input type="radio" name="benchmark" checked>无</label>
+            <label><input type="radio" name="benchmark">有：请说明</label>
+          </td>
+          <td class="label">风险控制</td>
+          <td colspan="3" class="center small">根据协会指引第二十四条开放式私募证券投资基金原则上不设置预警线、止损线</td>
+        </tr>
+        <tr>
+          <td class="label">关联交易决策机制</td>
+          <td colspan="7" class="small">关联交易投资决策应当经【<input class="mini-input" type="text" aria-label="关联交易审批机构">】审批通过后方可执行。</td>
+        </tr>
+
+        <tr>
+          <th class="section" colspan="8">产品估值信息</th>
+        </tr>
+        <tr>
+          <td class="label">估值核对时间</td>
+          <td colspan="3">
+            <label><input type="radio" name="valuation" checked>每个交易日</label>
+            <label><input type="radio" name="valuation">每周/月/季最后一个交易日</label>
+            <label><input type="radio" name="valuation">其他</label>
+          </td>
+          <td class="label">份额净值保留位数</td>
+          <td colspan="3" class="center">基金份额净值保留到小数点后4位</td>
+        </tr>
+
+        <tr>
+          <th class="section" colspan="8">产品费用信息</th>
+        </tr>
+        <tr>
+          <td class="subhead">费用类型</td>
+          <td class="subhead">年费率</td>
+          <td colspan="2" class="subhead">支付频率</td>
+          <td class="subhead">费用归属</td>
+          <td class="subhead">是否保底</td>
+          <td colspan="2" class="subhead">支付时间</td>
+        </tr>
+        <tr>
+          <td class="label">管理费</td>
+          <td class="center">【<input class="mini-input" type="text">】%</td>
+          <td colspan="2" class="center">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
+          <td class="center">管理人</td>
+          <td class="fee-base"><label><input type="radio" name="mBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<input class="mini-input" type="text">】万</span></span></label><label><input type="radio" name="mBase" checked><span class="fee-base-text">否</span></label></td>
+          <td colspan="2" class="center fee-pay">下个季度初开始，无需出具划拨指令，自行划付</td>
+        </tr>
+        <tr>
+          <td class="label">托管费</td>
+          <td class="center">【<input class="mini-input" type="text">】%</td>
+          <td colspan="2" class="center">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
+          <td class="center">托管人</td>
+          <td class="fee-base"><label><input type="radio" name="cBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<input class="mini-input" type="text">】万</span></span></label><label><input type="radio" name="cBase" checked><span class="fee-base-text">否</span></label></td>
+          <td colspan="2" class="center fee-pay">下个季度初开始，无需出具划拨指令，自行划付</td>
+        </tr>
+        <tr>
+          <td class="label">基金服务费</td>
+          <td class="center">【<input class="mini-input" type="text">】%</td>
+          <td colspan="2" class="center">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
+          <td class="center">基金服务商</td>
+          <td class="fee-base"><label><input type="radio" name="sBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<input class="mini-input" type="text">】万</span></span></label><label><input type="radio" name="sBase" checked><span class="fee-base-text">否</span></label></td>
+          <td colspan="2" class="center fee-pay">下个季度初开始，无需出具划拨指令，自行划付</td>
+        </tr>
+        <tr>
+          <td class="label">投资顾问费 <span class="note">（如有）</span></td>
+          <td class="center">【<input class="mini-input" type="text">】%</td>
+          <td colspan="2" class="center">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
+          <td class="center">投资顾问</td>
+          <td class="fee-base"><label><input type="radio" name="aBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<input class="mini-input" type="text">】万</span></span></label><label><input type="radio" name="aBase" checked><span class="fee-base-text">否</span></label></td>
+          <td colspan="2" class="center fee-pay">下个季度初开始，无需出具划拨指令，自行划付</td>
+        </tr>
+        <tr class="tall">
+          <td class="label">业绩报酬</td>
+          <td colspan="7" class="small">
+            <span class="note">注：</span>1、业绩报酬计提比例不得超过业绩报酬计提基准以上投资收益的60%；<br>
+            2、连续两次计提业绩报酬的间隔期不应短于6个月，在投资者赎回基金份额时或在基金清算时计提业绩报酬的，可以不受前述间隔期的限制。
+          </td>
+        </tr>
+        <tr>
+          <td class="subhead">是否收取</td>
+          <td class="subhead">计提方式</td>
+          <td colspan="2" class="subhead">计提时点</td>
+          <td colspan="2" class="subhead">计提基准</td>
+          <td colspan="2" class="subhead">计提比例</td>
+        </tr>
+        <tr>
+          <td rowspan="4" class="performance-choice">
+            <label><input type="radio" name="performance" checked>收取（需填写后方）</label><br>
+            <label><input type="radio" name="performance">不收取</label>
+          </td>
+          <td>单人单笔份额高水位法</td>
+          <td colspan="2">
+            <label><input type="checkbox" checked>赎回日</label>
+            <label><input type="checkbox" checked>分红日</label>
+            <label><input type="checkbox" checked>终止日</label>
+          </td>
+          <td colspan="2">
+            <label><input type="radio" name="base1" checked>有：【<input class="mini-input" type="text" aria-label="计提基准1">】</label>
+            <label><input type="radio" name="base1">无</label>
+          </td>
+          <td colspan="2"><input class="line-input" type="text" aria-label="计提比例1"></td>
+        </tr>
+        <tr>
+          <td>单人单笔份额年化收益率法</td>
+          <td colspan="2">
+            <label><input type="checkbox">赎回日</label>
+            <label><input type="checkbox">分红日</label>
+            <label><input type="checkbox">终止日</label>
+          </td>
+          <td colspan="2">
+            <label><input type="radio" name="base2">有：【<input class="mini-input" type="text" aria-label="计提基准2">】</label>
+            <label><input type="radio" name="base2">无</label>
+          </td>
+          <td colspan="2"><input class="line-input" type="text" aria-label="计提比例2"></td>
+        </tr>
+        <tr>
+          <td class="fill"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+        </tr>
+        <tr>
+          <td class="fill"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+        </tr>
+        <tr class="xl">
+          <td class="label">收益分配 <span class="note">（管理人确认）</span></td>
+          <td colspan="7" class="small">
+            <span class="note">注：</span>1、收益分配方式为现金分红或红利再投资两种方式，默认为【<input class="mini-input distribution-default-input" type="text" value="现金分红" aria-label="默认收益分配方式">】<span class="note">（请管理人确认）</span>；<br>
+            2、基金收益分配后基金份额净值不能低于面值；即基金收益分配基准日的基金份额净值减去每单位基金份额收益分配金额后不能低于面值；<br>
+            3、对于红利再投资份额视作在红利再投日新增申购份额（不收取申购费），该新增申购份额适用于本合同约定的基金份额不允许赎回期限（<span class="note">如有</span>）限制及按照本合同约定收取赎回费（<span class="note">如有</span>）。
+          </td>
+        </tr>
+        <tr>
+          <td class="subhead">是否分配</td>
+          <td class="subhead">分配方式</td>
+          <td colspan="4" class="subhead">分配基准日及比例</td>
+          <td colspan="2" class="subhead">分配次数</td>
+        </tr>
+        <tr class="tall">
+          <td class="center">
+            <label><input type="radio" name="distribution" value="yes" checked>是</label>
+            <label><input type="radio" name="distribution" value="no">否</label>
+          </td>
+          <td data-distribution-detail>
+            <label><input type="radio" name="distributionType" value="现金分红" checked>现金分红</label><br>
+            <label><input type="radio" name="distributionType" value="红利再投资">红利再投资</label>
+          </td>
+          <td colspan="4" class="center" data-distribution-detail>管理人自行决定</td>
+          <td colspan="2" class="center" data-distribution-detail>2次</td>
+        </tr>
+      </table>
+      </div>
+      </div>
+    </form>
+  </div>
+  <div class="cell-tooltip" id="lockedCellTooltip" role="tooltip" hidden></div>
+  <script>
+    const saveHtmlButton = document.getElementById("saveHtmlButton");
+    const saveAsHtmlButton = document.getElementById("saveAsHtmlButton");
+const lockedCellTooltip = document.getElementById("lockedCellTooltip");
+    const sheetViewport = document.getElementById("sheetViewport");
+    const sheetScale = document.getElementById("sheetScale");
+    const sheetTable = sheetViewport?.querySelector(".sheet");
+    const minSheetZoom = 1;
+    const maxSheetZoom = 3;
+    const pinchActivationDistance = 4;
+    let sheetZoom = 1;
+    let pinchStartDistance = 0;
+    let pinchStartZoom = 1;
+    let pinchStartCenter = null;
+    let pinchStartScroll = null;
+    let isSheetPinching = false;
+    let hasUnsavedChanges = false;
+
+    function markUnsavedChanges() {
+      hasUnsavedChanges = true;
+    }
+
+    function clearUnsavedChanges() {
+      hasUnsavedChanges = false;
+    }
+
+    window.addEventListener("beforeunload", (event) => {
+      if (!hasUnsavedChanges) {
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = "";
+    });
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function getTouchDistance(touches) {
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.hypot(dx, dy);
+    }
+
+    function getTouchCenter(touches) {
+      return {
+        x: (touches[0].clientX + touches[1].clientX) / 2,
+        y: (touches[0].clientY + touches[1].clientY) / 2,
+      };
+    }
+
+    function applySheetZoom(nextZoom) {
+      if (!sheetScale || !sheetTable) {
+        return;
+      }
+
+      sheetZoom = clamp(nextZoom, minSheetZoom, maxSheetZoom);
+      sheetTable.style.transform = sheetZoom === 1 ? "" : `scale(${sheetZoom})`;
+      sheetScale.style.width = sheetZoom === 1 ? "" : `${sheetTable.offsetWidth * sheetZoom}px`;
+      sheetScale.style.height = sheetZoom === 1 ? "" : `${sheetTable.offsetHeight * sheetZoom}px`;
+    }
+
+    function preservePinchCenter() {
+      if (!sheetViewport || !pinchStartCenter || !pinchStartScroll) {
+        return;
+      }
+
+      const rect = sheetViewport.getBoundingClientRect();
+      const startLocalX = pinchStartCenter.x - rect.left + pinchStartScroll.left;
+      const zoomRatio = sheetZoom / pinchStartZoom;
+
+      sheetViewport.scrollLeft = startLocalX * zoomRatio - (pinchStartCenter.x - rect.left);
+    }
+
+    function endSheetPinch() {
+      pinchStartDistance = 0;
+      pinchStartCenter = null;
+      pinchStartScroll = null;
+      isSheetPinching = false;
+      sheetViewport?.classList.remove("is-pinching");
+    }
+
+    if (sheetViewport && sheetScale && sheetTable) {
+      sheetViewport.addEventListener("touchstart", (event) => {
+        if (event.touches.length !== 2) {
+          return;
+        }
+
+        pinchStartDistance = getTouchDistance(event.touches);
+        pinchStartZoom = sheetZoom;
+        pinchStartCenter = getTouchCenter(event.touches);
+        pinchStartScroll = {
+          left: sheetViewport.scrollLeft,
+          top: sheetViewport.scrollTop,
+        };
+      }, { passive: true });
+
+      sheetViewport.addEventListener("touchmove", (event) => {
+        if (event.touches.length !== 2 || pinchStartDistance <= 0) {
+          return;
+        }
+
+        const currentDistance = getTouchDistance(event.touches);
+        if (!isSheetPinching && Math.abs(currentDistance - pinchStartDistance) < pinchActivationDistance) {
+          return;
+        }
+
+        isSheetPinching = true;
+        sheetViewport.classList.add("is-pinching");
+        event.preventDefault();
+        applySheetZoom(pinchStartZoom * currentDistance / pinchStartDistance);
+        preservePinchCenter();
+      }, { passive: false });
+
+      sheetViewport.addEventListener("touchend", (event) => {
+        if (event.touches.length >= 2) {
+          return;
+        }
+
+        endSheetPinch();
+      });
+
+      sheetViewport.addEventListener("touchcancel", endSheetPinch);
+
+      sheetViewport.addEventListener("gesturestart", (event) => {
+        event.preventDefault();
+        pinchStartZoom = sheetZoom;
+        sheetViewport.classList.add("is-pinching");
+      });
+
+      sheetViewport.addEventListener("gesturechange", (event) => {
+        event.preventDefault();
+        applySheetZoom(pinchStartZoom * event.scale);
+      });
+
+      sheetViewport.addEventListener("gestureend", endSheetPinch);
+    }
+
+    function syncFormStateForSave(root) {
+      root.querySelectorAll("input, textarea").forEach((input) => {
+        if (input.type === "checkbox" || input.type === "radio") {
+          input.toggleAttribute("checked", input.checked);
+          input.removeAttribute("data-was-checked");
+          return;
+        }
+
+        input.setAttribute("value", input.value);
+        if (input.tagName === "TEXTAREA") {
+          input.textContent = input.value;
+        }
+      });
+    }
+
+    function createHtmlSnapshot() {
+      const savedSheetZoom = sheetZoom;
+
+      try {
+        applySheetZoom(1);
+        document.querySelectorAll(".selected-cell").forEach((cell) => {
+          cell.classList.remove("selected-cell");
+        });
+        hideLockedCellTooltip();
+        syncFormStateForSave(document);
+
+        return "<!doctype html>\n" + document.documentElement.outerHTML;
+      } finally {
+        applySheetZoom(savedSheetZoom);
+      }
+    }
+
+    function createDefaultHtmlFileName() {
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, "");
+
+      return `product-form-${timestamp}.html`;
+    }
+
+    function downloadHtml(html, fileName) {
+      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const link = document.createElement("a");
+
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(link.href);
+      clearUnsavedChanges();
+    }
+
+    function saveCurrentHtml() {
+      downloadHtml(createHtmlSnapshot(), createDefaultHtmlFileName());
+    }
+
+    async function saveAsCurrentHtml() {
+      const html = createHtmlSnapshot();
+      const fileName = createDefaultHtmlFileName();
+
+      if (!window.showSaveFilePicker) {
+        downloadHtml(html, fileName);
+        return;
+      }
+
+      try {
+        const fileHandle = await window.showSaveFilePicker({
+          suggestedName: fileName,
+          types: [
+            {
+              description: "HTML 文件",
+              accept: { "text/html": [".html", ".htm"] },
+            },
+          ],
+        });
+        const writable = await fileHandle.createWritable();
+
+        await writable.write(new Blob([html], { type: "text/html;charset=utf-8" }));
+        await writable.close();
+        clearUnsavedChanges();
+      } catch (error) {
+        if (error.name === "AbortError") {
+          return;
+        }
+
+        console.error(error);
+        downloadHtml(html, fileName);
+      }
+    }
+
+    saveHtmlButton?.addEventListener("click", saveCurrentHtml);
+    saveAsHtmlButton?.addEventListener("click", saveAsCurrentHtml);
+
+    document.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        saveCurrentHtml();
+      }
+    });
+
+
+    function getLockedCellHelpText(cell) {
+      const cellName = cell.textContent.replace(/\s+/g, " ").trim();
+
+      if (!cellName) {
+        return "";
+      }
+
+      if (cell.classList.contains("subhead")) {
+        return `${cellName}：这是固定表头，不需要修改；请按这一列的含义填写下方对应的空白格。`;
+      }
+
+      return `${cellName}：这是固定字段名，不需要修改；请在后面或右侧对应的空白格填写。`;
+    }
+
+    function moveLockedCellTooltip(x, y) {
+      if (!lockedCellTooltip || lockedCellTooltip.hidden) {
+        return;
+      }
+
+      const gap = 12;
+      const width = lockedCellTooltip.offsetWidth || 320;
+      const height = lockedCellTooltip.offsetHeight || 72;
+      let left = x + gap;
+      let top = y + gap;
+
+      if (left + width > window.innerWidth - 8) {
+        left = x - width - gap;
+      }
+
+      if (top + height > window.innerHeight - 8) {
+        top = y - height - gap;
+      }
+
+      lockedCellTooltip.style.left = `${Math.max(8, left)}px`;
+      lockedCellTooltip.style.top = `${Math.max(8, top)}px`;
+    }
+
+    function showLockedCellTooltip(cell, event) {
+      if (!lockedCellTooltip) {
+        return;
+      }
+
+      const helpText = getLockedCellHelpText(cell);
+
+      if (!helpText) {
+        return;
+      }
+
+      lockedCellTooltip.textContent = helpText;
+      lockedCellTooltip.hidden = false;
+
+      if (event) {
+        moveLockedCellTooltip(event.clientX, event.clientY);
+        return;
+      }
+
+      const rect = cell.getBoundingClientRect();
+      moveLockedCellTooltip(rect.right, rect.top + rect.height / 2);
+    }
+
+    function hideLockedCellTooltip() {
+      if (lockedCellTooltip) {
+        lockedCellTooltip.hidden = true;
+      }
+    }
+
+    document.querySelectorAll("input.line-input").forEach((input) => {
+      const textarea = document.createElement("textarea");
+      textarea.className = input.className;
+      textarea.value = input.value || "";
+      textarea.setAttribute("aria-label", input.getAttribute("aria-label") || "填写内容");
+      if (input.classList.contains("digits-only")) {
+        textarea.setAttribute("inputmode", "numeric");
+        textarea.setAttribute("pattern", "[0-9]*");
+      }
+      input.replaceWith(textarea);
+    });
+
+    document.querySelectorAll("input.mini-input").forEach((input) => {
+      const textarea = document.createElement("textarea");
+      const value = input.value || "";
+      textarea.className = input.className;
+      textarea.defaultValue = value === "填写内容" ? "" : value;
+      textarea.value = textarea.defaultValue;
+      textarea.placeholder = "";
+      textarea.rows = 1;
+      textarea.wrap = "soft";
+      if (input.getAttribute("aria-label")) {
+        textarea.setAttribute("aria-label", input.getAttribute("aria-label"));
+      }
+      input.replaceWith(textarea);
+      textarea.closest("label")?.classList.add("has-mini-input");
+    });
+
+    function getMiniInputMaxWidth(input) {
+      const cell = input.closest("td, th");
+
+      if (!cell) {
+        return Math.max(1, input.parentElement?.clientWidth || input.clientWidth || 52);
+      }
+
+      return Math.max(1, cell.clientWidth - 40);
+    }
+
+    function resizeMiniInput(input) {
+      const valueLength = input.value.length;
+      const maxWidth = getMiniInputMaxWidth(input);
+      const emptyWidth = window.matchMedia("(max-width: 768px)").matches ? 36 : 28;
+      const nextWidth = Math.min(maxWidth, valueLength === 0 ? emptyWidth : (valueLength + 1) * 8);
+
+      input.style.width = `${nextWidth}px`;
+      resizeTextInputHeight(input);
+    }
+
+    function resizeTextInputHeight(input) {
+      requestAnimationFrame(() => {
+        input.style.height = "auto";
+        input.style.height = `${input.scrollHeight}px`;
+      });
+    }
+
+    document.querySelectorAll(".line-input").forEach((input) => {
+      resizeTextInputHeight(input);
+      input.addEventListener("input", () => {
+        resizeTextInputHeight(input);
+      });
+    });
+
+    document.querySelectorAll(".mini-input").forEach((input) => {
+      input.placeholder = "";
+      if (input.value === "填写内容") {
+        input.value = "";
+      }
+      resizeMiniInput(input);
+      input.addEventListener("input", () => {
+        resizeMiniInput(input);
+      });
+    });
+
+    window.addEventListener("resize", () => {
+      document.querySelectorAll(".line-input").forEach(resizeTextInputHeight);
+      document.querySelectorAll(".mini-input").forEach(resizeMiniInput);
+    });
+
+    function keepDigitsOnly(field) {
+      const originalValue = field.value;
+      const nextValue = originalValue.replace(/\D/g, "");
+
+      if (nextValue === originalValue) {
+        return;
+      }
+
+      const selectionStart = field.selectionStart ?? originalValue.length;
+      const removedBeforeCursor = originalValue.slice(0, selectionStart).replace(/\d/g, "").length;
+      const nextSelectionStart = Math.max(0, selectionStart - removedBeforeCursor);
+
+      field.value = nextValue;
+      field.setSelectionRange(nextSelectionStart, nextSelectionStart);
+    }
+
+    document.querySelectorAll(".digits-only").forEach((field) => {
+      keepDigitsOnly(field);
+      field.addEventListener("input", () => {
+        keepDigitsOnly(field);
+      });
+    });
+
+    const distributionDefaultInput = document.querySelector(".distribution-default-input");
+    const distributionRadios = document.querySelectorAll('input[name="distribution"]');
+    const distributionTypeRadios = document.querySelectorAll('input[name="distributionType"]');
+    const distributionDetailCells = document.querySelectorAll("[data-distribution-detail]");
+
+    function syncDistributionDefaultFromType() {
+      const selectedType = document.querySelector('input[name="distributionType"]:checked');
+
+      if (!distributionDefaultInput || !selectedType) {
+        return;
+      }
+
+      distributionDefaultInput.value = selectedType.value;
+      resizeMiniInput(distributionDefaultInput);
+    }
+
+    function syncDistributionTypeFromDefault() {
+      if (!distributionDefaultInput) {
+        return;
+      }
+
+      const matchedType = Array.from(distributionTypeRadios).find((radio) => radio.value === distributionDefaultInput.value.trim());
+
+      if (matchedType) {
+        matchedType.checked = true;
+      }
+    }
+
+    function syncDistributionEnabledState() {
+      const shouldDistribute = document.querySelector('input[name="distribution"]:checked')?.value !== "no";
+
+      if (shouldDistribute) {
+        syncDistributionTypeFromDefault();
+      }
+
+      if (distributionDefaultInput) {
+        distributionDefaultInput.disabled = !shouldDistribute;
+      }
+
+      distributionTypeRadios.forEach((radio) => {
+        radio.disabled = !shouldDistribute;
+        if (!shouldDistribute) {
+          radio.checked = false;
+        }
+      });
+
+      distributionDetailCells.forEach((cell) => {
+        cell.classList.toggle("distribution-disabled", !shouldDistribute);
+        cell.querySelectorAll("input, textarea, select, button").forEach((field) => {
+          field.disabled = !shouldDistribute;
+        });
+        if (!cell.querySelector("input, textarea, select, button")) {
+          if (shouldDistribute) {
+            cell.contentEditable = "true";
+          } else {
+            cell.removeAttribute("contenteditable");
+          }
+        }
+      });
+    }
+
+    distributionTypeRadios.forEach((radio) => {
+      radio.addEventListener("change", syncDistributionDefaultFromType);
+    });
+
+    distributionDefaultInput?.addEventListener("input", () => {
+      resizeMiniInput(distributionDefaultInput);
+      syncDistributionTypeFromDefault();
+    });
+
+    distributionRadios.forEach((radio) => {
+      radio.addEventListener("change", syncDistributionEnabledState);
+      radio.addEventListener("click", () => {
+        requestAnimationFrame(syncDistributionEnabledState);
+      });
+    });
+
+    syncDistributionEnabledState();
+
+    function focusField(field) {
+      try {
+        field.focus({ preventScroll: true });
+      } catch (error) {
+        field.focus();
+      }
+    }
+
+    document.querySelectorAll(".line-input, .mini-input").forEach((field) => {
+      field.addEventListener("pointerdown", (event) => {
+        event.stopPropagation();
+        if (field.classList.contains("mini-input") && event.pointerType !== "mouse") {
+          focusField(field);
+        }
+      });
+
+      field.addEventListener("touchstart", (event) => {
+        if (event.touches.length > 1) {
+          return;
+        }
+
+        event.stopPropagation();
+        focusField(field);
+      }, { passive: true });
+
+      field.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+    });
+
+    document.querySelectorAll(".sheet td").forEach((cell, index) => {
+      const hasInteractiveContent = cell.querySelector('input, textarea, .cell-editor, .inline-blank');
+      const isDisabledDistributionDetail = cell.hasAttribute("data-distribution-detail")
+        && document.querySelector('input[name="distribution"]:checked')?.value === "no";
+      const canEditWholeCell = !cell.classList.contains("label") && !cell.classList.contains("subhead") && !hasInteractiveContent && !isDisabledDistributionDetail;
+
+      if (canEditWholeCell) {
+        cell.contentEditable = "true";
+        cell.addEventListener("input", markUnsavedChanges);
+      } else {
+        cell.removeAttribute("contenteditable");
+      }
+
+      if (cell.classList.contains("label") || cell.classList.contains("subhead")) {
+        cell.classList.add("locked-help-cell");
+        cell.tabIndex = 0;
+        cell.setAttribute("aria-describedby", "lockedCellTooltip");
+
+        cell.addEventListener("mouseenter", (event) => {
+          showLockedCellTooltip(cell, event);
+        });
+
+        cell.addEventListener("mousemove", (event) => {
+          moveLockedCellTooltip(event.clientX, event.clientY);
+        });
+
+        cell.addEventListener("mouseleave", hideLockedCellTooltip);
+        cell.addEventListener("focus", () => {
+          showLockedCellTooltip(cell);
+        });
+        cell.addEventListener("blur", hideLockedCellTooltip);
+        cell.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            hideLockedCellTooltip();
+          }
+        });
+      }
+
+      const hasContent = cell.textContent.trim() || cell.querySelector("input, textarea, select");
+
+      if (!hasContent && cell.getAttribute("rowspan") === null) {
+        cell.appendChild(document.createElement("br"));
+      }
+
+      cell.addEventListener("click", (event) => {
+        if (event.target.matches("input, label") || event.target.closest("label")) {
+          return;
+        }
+
+        document.querySelectorAll(".selected-cell").forEach((selectedCell) => {
+          selectedCell.classList.remove("selected-cell");
+        });
+        cell.classList.add("selected-cell");
+        cell.focus();
+      });
+    });
+
+    document.querySelector("form")?.addEventListener("input", markUnsavedChanges);
+    document.querySelector("form")?.addEventListener("change", markUnsavedChanges);
+
+    document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+      radio.closest("label")?.addEventListener("mousedown", () => {
+        radio.dataset.wasChecked = radio.checked ? "true" : "false";
+      });
+
+      radio.addEventListener("mousedown", () => {
+        radio.dataset.wasChecked = radio.checked ? "true" : "false";
+      });
+
+      radio.addEventListener("click", () => {
+        if (radio.dataset.wasChecked === "true") {
+          radio.checked = false;
+          markUnsavedChanges();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
