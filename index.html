@@ -307,13 +307,15 @@
       min-width: 88px;
     }
 
-    .distribution-disabled {
+    .distribution-disabled,
+    .redeem-method-disabled {
       background: #f3f5f8;
       color: #777;
       cursor: not-allowed;
     }
 
-    .distribution-disabled label {
+    .distribution-disabled label,
+    .redeem-method-disabled label {
       cursor: not-allowed;
     }
 
@@ -818,15 +820,15 @@
         <tr>
           <td class="label">赎回费</td>
           <td colspan="2">
-            <label><input type="radio" name="redeemFee" checked>不收取</label>
-            <label><input type="radio" name="redeemFee">收取：【<input class="mini-input" type="text">】%</label>
+            <label><input type="radio" name="redeemFee" value="no" checked>不收取</label>
+            <label><input type="radio" name="redeemFee" value="yes">收取：【<input class="mini-input" type="text">】%</label>
           </td>
           <td class="label">赎回费归属</td>
           <td colspan="4" class="center">基金财产</td>
         </tr>
         <tr>
-          <td class="label">收费方式（赎回）</td>
-          <td colspan="7" class="small">
+          <td class="label" data-redeem-method>收费方式（赎回）</td>
+          <td colspan="7" class="small" data-redeem-method>
             <label><input type="radio" name="redeemMethod">赎回费率：【<input class="mini-input" type="text">】%</label>
             <label><input type="radio" name="redeemMethod" checked>分段收取：基金份额持有期限低于【<input class="mini-input" type="text">】天的，赎回费率为【<input class="mini-input" type="text">】%，基金份额持有期在【<input class="mini-input" type="text">】天及以上的，赎回费率为【<input class="mini-input" type="text">】%</label>
           </td>
@@ -1434,6 +1436,8 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
     const distributionRadios = document.querySelectorAll('input[name="distribution"]');
     const distributionTypeRadios = document.querySelectorAll('input[name="distributionType"]');
     const distributionDetailCells = document.querySelectorAll("[data-distribution-detail]");
+    const redeemFeeRadios = document.querySelectorAll('input[name="redeemFee"]');
+    const redeemMethodCells = document.querySelectorAll("[data-redeem-method]");
 
     function syncDistributionDefaultFromType() {
       const selectedType = document.querySelector('input[name="distributionType"]:checked');
@@ -1491,6 +1495,17 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       });
     }
 
+    function syncRedeemMethodEnabledState() {
+      const shouldChargeRedeemFee = document.querySelector('input[name="redeemFee"]:checked')?.value === "yes";
+
+      redeemMethodCells.forEach((cell) => {
+        cell.classList.toggle("redeem-method-disabled", !shouldChargeRedeemFee);
+        cell.querySelectorAll("input, textarea, select, button").forEach((field) => {
+          field.disabled = !shouldChargeRedeemFee;
+        });
+      });
+    }
+
     distributionTypeRadios.forEach((radio) => {
       radio.addEventListener("change", syncDistributionDefaultFromType);
     });
@@ -1507,7 +1522,15 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       });
     });
 
+    redeemFeeRadios.forEach((radio) => {
+      radio.addEventListener("change", syncRedeemMethodEnabledState);
+      radio.addEventListener("click", () => {
+        requestAnimationFrame(syncRedeemMethodEnabledState);
+      });
+    });
+
     syncDistributionEnabledState();
+    syncRedeemMethodEnabledState();
 
     function focusField(field) {
       try {
