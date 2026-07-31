@@ -1,17 +1,43 @@
 <!doctype html>
-<html lang="zh-CN"><head>
+<html lang="zh-CN">
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>产品要素表</title>
   <style>
+    :root {
+      --page-bg: #f1f6fb;
+      --surface: #ffffff;
+      --surface-soft: #f7fbff;
+      --text: #25384a;
+      --muted-text: #627488;
+      --line: #b7c9d9;
+      --line-strong: #7f9bb5;
+      --accent: #4576a1;
+      --accent-hover: #3a668e;
+      --accent-bg: #4b789f;
+      --accent-bg-hover: #416e96;
+      --accent-soft: #edf5fb;
+      --toolbar-bg: #fbfdff;
+      --header-bg: #7196ba;
+      --section-bg: #bed4e7;
+      --label-bg: #e1edf7;
+      --subhead-bg: #d2e2f0;
+      --danger: #c13b32;
+      --disabled-bg: #f2f6f9;
+      --disabled-text: #8797a8;
+      --shadow-soft: rgba(47, 84, 116, .08);
+      --shadow-strong: rgba(47, 84, 116, .14);
+    }
+
     * {
       box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      background: #edf2f9;
-      color: #151515;
+      background: var(--page-bg);
+      color: var(--text);
       font-family: "Microsoft YaHei", "SimSun", Arial, sans-serif;
       font-size: 14px;
       overflow-x: hidden;
@@ -37,29 +63,30 @@
       justify-content: flex-end;
       gap: 10px;
       padding: 10px;
-      border: 1px solid rgba(109, 120, 144, .28);
+      border: 1px solid var(--line);
       border-radius: 8px;
-      background: rgba(255, 255, 255, .76);
-      box-shadow: 0 8px 24px rgba(36, 58, 104, .1);
+      background: var(--toolbar-bg);
+      box-shadow: 0 2px 8px var(--shadow-soft);
     }
 
     .save-button {
       height: 36px;
       padding: 0 16px;
-      border: 1px solid #1f6feb;
+      border: 1px solid var(--accent);
       border-radius: 6px;
-      background: #1f6feb;
+      background: var(--accent-bg);
       color: #fff;
       font: inherit;
       font-weight: 600;
       cursor: pointer;
+      box-shadow: none;
       transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease;
     }
 
     .save-button:hover {
-      background: #1a5fc8;
-      border-color: #1a5fc8;
-      box-shadow: 0 6px 14px rgba(31, 111, 235, .22);
+      background: var(--accent-bg-hover);
+      border-color: var(--accent-hover);
+      box-shadow: 0 2px 6px var(--shadow-strong);
       transform: translateY(-1px);
     }
 
@@ -68,24 +95,24 @@
     }
 
     .save-button.secondary {
-      border-color: #b8c5d8;
-      background: #fff;
-      color: #24466f;
+      border-color: var(--line-strong);
+      background: var(--surface-soft);
+      color: var(--accent);
     }
 
     .save-button.secondary:hover {
-      border-color: #8fa5c4;
-      background: #f6f9ff;
-      box-shadow: 0 6px 14px rgba(36, 58, 104, .12);
+      border-color: var(--accent);
+      background: var(--surface-soft);
+      box-shadow: 0 2px 6px var(--shadow-soft);
     }
 
     table.sheet {
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
-      background: #fff;
-      border: 1px solid #6d7890;
-      box-shadow: 0 12px 32px rgba(36, 58, 104, .16);
+      background: var(--surface);
+      border: 0;
+      box-shadow: none;
     }
 
     .sheet-viewport {
@@ -95,6 +122,10 @@
       overflow-x: auto;
       overflow-y: visible;
       touch-action: pan-y;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 4px 18px var(--shadow-strong);
     }
 
     .sheet-scale {
@@ -121,7 +152,7 @@
 
     th,
     td {
-      border: 1px solid #6f7785;
+      border: 1px solid var(--line);
       height: 28px;
       padding: 3px 6px;
       vertical-align: middle;
@@ -133,30 +164,38 @@
 
     .title {
       height: 78px;
-      background: #91aad8;
+      background: var(--header-bg);
+      color: #ffffff;
       font-size: 36px;
       font-weight: 700;
       text-align: center;
       letter-spacing: 0;
+      text-shadow: none;
+      box-shadow: none;
     }
 
     .section {
       height: 34px;
-      background: #91aad8;
+      background: var(--section-bg);
+      color: var(--text);
       font-size: 24px;
       font-weight: 700;
       text-align: center;
+      text-shadow: none;
+      box-shadow: none;
     }
 
     .label {
-      background: #b9c9e6;
+      background: var(--label-bg);
       font-weight: 600;
+      box-shadow: none;
     }
 
     .subhead {
-      background: #dce5f5;
+      background: var(--subhead-bg);
       font-weight: 700;
       text-align: center;
+      box-shadow: none;
     }
 
     .center {
@@ -168,12 +207,12 @@
     }
 
     .note {
-      color: #e60000;
+      color: var(--danger);
       font-weight: 700;
     }
 
     .muted {
-      color: #333;
+      color: var(--muted-text);
       font-size: 13px;
     }
 
@@ -236,7 +275,7 @@
     input[type="checkbox"] {
       margin: 0 2px 0 0;
       vertical-align: middle;
-      accent-color: #1f6feb;
+      accent-color: var(--accent);
       touch-action: manipulation;
     }
 
@@ -281,8 +320,9 @@
 
     .mini-input:focus,
     .line-input:focus {
-      outline: 2px solid #2f73ff;
-      background: #fff;
+      outline: 2px solid var(--accent);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(69, 118, 161, .14);
     }
 
     .mini-input.amount-input {
@@ -308,8 +348,8 @@
 
     .distribution-disabled,
     .redeem-method-disabled {
-      background: #f3f5f8;
-      color: #777;
+      background: var(--disabled-bg);
+      color: var(--disabled-text);
       cursor: not-allowed;
     }
 
@@ -319,7 +359,7 @@
     }
 
     .distribution-default-input:disabled {
-      color: #777;
+      color: var(--disabled-text);
       cursor: not-allowed;
     }
 
@@ -397,8 +437,9 @@
     }
 
     .inline-blank:focus {
-      outline: 2px solid #2f73ff;
-      background: #fff;
+      outline: 2px solid var(--accent);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(69, 118, 161, .14);
     }
 
     .blank {
@@ -419,20 +460,21 @@
     }
 
     td[contenteditable="true"]:not(.label):not(.subhead):hover {
-      background: #f8fbff;
+      background: var(--accent-soft);
     }
 
     td[contenteditable="true"]:focus {
-      outline: 2px solid #2f73ff;
+      outline: 2px solid var(--accent);
       outline-offset: -2px;
-      background: #fff;
+      background: var(--surface);
+      box-shadow: inset 0 0 0 1px rgba(69, 118, 161, .2);
     }
 
     td.selected-cell {
-      outline: 2px solid #2f73ff;
+      outline: 2px solid var(--accent);
       outline-offset: -2px;
-      background: #fff;
-      box-shadow: inset 0 0 0 1px rgba(47, 115, 255, .2);
+      background: var(--surface);
+      box-shadow: inset 0 0 0 1px rgba(69, 118, 161, .24), 0 0 0 3px rgba(69, 118, 161, .12);
     }
 
     .locked-help-cell {
@@ -441,7 +483,7 @@
 
     .locked-help-cell:hover,
     .locked-help-cell:focus {
-      outline: 2px solid #2f73ff;
+      outline: 2px solid var(--accent);
       outline-offset: -2px;
     }
 
@@ -450,11 +492,11 @@
       z-index: 50;
       max-width: 320px;
       padding: 8px 10px;
-      border: 1px solid #2f5f9f;
+      border: 1px solid var(--accent);
       border-radius: 6px;
-      background: #fff;
-      color: #151515;
-      box-shadow: 0 8px 24px rgba(36, 58, 104, .2);
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 8px 24px var(--shadow-strong);
       font-size: 13px;
       line-height: 1.5;
       pointer-events: none;
@@ -619,6 +661,19 @@
         min-height: 36px;
         line-height: 1.45;
       }
+
+      .distribution-default-input {
+        min-width: 72px;
+        min-height: 28px;
+        padding: 2px 3px;
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      [data-distribution-detail] label {
+        font-size: 12px;
+        line-height: 1.35;
+      }
     }
   </style>
 </head>
@@ -642,90 +697,90 @@
           <col class="c7">
           <col class="c8">
         </colgroup>
-        <tbody><tr>
+        <tr>
           <th class="title" colspan="8">产品要素表</th>
         </tr>
         <tr>
           <th class="section" colspan="8">产品基本信息</th>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">产品名称</td>
-          <td colspan="7"><textarea class="line-input" aria-label="产品名称" value="" style="height: 45px;"></textarea></td>
+          <td class="label">产品名称</td>
+          <td colspan="7"><input class="line-input" type="text" aria-label="产品名称"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">拟备案产品类型</td>
+          <td class="label">拟备案产品类型</td>
           <td colspan="3">
-            <label><input type="radio" name="productType" checked="">固定收益类</label>
+            <label><input type="radio" name="productType" checked>固定收益类</label>
             <label><input type="radio" name="productType">权益类</label>
             <label><input type="radio" name="productType">混合类</label>
             <label><input type="radio" name="productType">期货和衍生品类</label>
             <label><input type="radio" name="productType">私募证券投资母基金</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">产品预备案编码</td>
-          <td colspan="3"><textarea class="line-input" aria-label="产品预备案编码" value="" style="height: 45px;"></textarea></td>
+          <td class="label">产品预备案编码</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="产品预备案编码"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">管理人名称</td>
-          <td colspan="3"><textarea class="line-input" aria-label="管理人名称" value="" style="height: 45px;"></textarea></td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">管理人登记编号</td>
-          <td colspan="3"><textarea class="line-input" aria-label="管理人登记编号" value="" style="height: 45px;"></textarea></td>
+          <td class="label">管理人名称</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="管理人名称"></td>
+          <td class="label">管理人登记编号</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="管理人登记编号"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">管理人银行账号</td>
-          <td colspan="3"><textarea class="line-input digits-only" aria-label="管理人银行账号" inputmode="numeric" pattern="[0-9]*" value="" style="height: 45px;"></textarea></td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">管理人银行账号开户行</td>
-          <td colspan="3"><textarea class="line-input" aria-label="开户行" value="" style="height: 45px;"></textarea></td>
+          <td class="label">管理人银行账号</td>
+          <td colspan="3"><input class="line-input digits-only" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="管理人银行账号"></td>
+          <td class="label">管理人银行账号开户行</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="开户行"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">托管人</td>
-          <td colspan="3"><textarea class="line-input" aria-label="托管人" value="" style="height: 45px;"></textarea></td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">投资顾问 <span class="note">（如有）</span></td>
-          <td colspan="3"><textarea class="line-input" aria-label="投资顾问" value="无" style="height: 45px;">无</textarea></td>
+          <td class="label">托管人</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="托管人"></td>
+          <td class="label">投资顾问 <span class="note">（如有）</span></td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="投资顾问"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">份额登记机构</td>
-          <td colspan="3"><textarea class="line-input" aria-label="份额登记机构" value="" style="height: 45px;"></textarea></td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">代销机构 <span class="note">（如有）</span></td>
-          <td colspan="3"><textarea class="line-input" aria-label="代销机构" value="" style="height: 45px;"></textarea></td>
+          <td class="label">份额登记机构</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="份额登记机构"></td>
+          <td class="label">代销机构 <span class="note">（如有）</span></td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="代销机构"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">基金服务机构</td>
-          <td colspan="3"><textarea class="line-input" aria-label="基金服务机构" value="" style="height: 45px;"></textarea></td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">证券经纪商 <span class="note">（如有）</span></td>
-          <td colspan="3"><textarea class="line-input" aria-label="证券经纪商" value="" style="height: 45px;"></textarea></td>
+          <td class="label">基金服务机构</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="基金服务机构"></td>
+          <td class="label">证券经纪商 <span class="note">（如有）</span></td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="证券经纪商"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">直销募集账户监督机构</td>
-          <td colspan="3"><textarea class="line-input" aria-label="直销募集账户监督机构" value="" style="height: 45px;"></textarea></td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">期货经纪商 <span class="note">（如有）</span></td>
-          <td colspan="3"><textarea class="line-input" aria-label="期货经纪商" value="" style="height: 45px;"></textarea></td>
+          <td class="label">直销募集账户监督机构</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="直销募集账户监督机构"></td>
+          <td class="label">期货经纪商 <span class="note">（如有）</span></td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="期货经纪商"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">运作方式</td>
+          <td class="label">运作方式</td>
           <td colspan="3">
-            <label><input type="radio" name="operation" checked="">定期开放</label>
+            <label><input type="radio" name="operation" checked>定期开放</label>
             <label><input type="radio" name="operation">封闭运作</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">存续期限</td>
-          <td colspan="3"><textarea class="line-input" aria-label="存续期限" value="" style="height: 45px;"></textarea></td>
+          <td class="label">存续期限</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="存续期限"></td>
         </tr>
         <tr class="tall">
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">份额分类<br><span class="note">（如分类管理人确认）</span></td>
+          <td class="label">份额分类<br><span class="note">（如分类管理人确认）</span></td>
           <td colspan="2">
-            <label><input type="radio" name="shareClass" checked="">不分类</label>
+            <label><input type="radio" name="shareClass" checked>不分类</label>
             <label><input type="radio" name="shareClass">分类</label>
           </td>
-          <td colspan="5" class="small" contenteditable="true">
+          <td colspan="5" class="small">
             A类：除B类份额之外的其他合格投资者<br>
             B类：基金管理人、管理人内部员工及管理人发行或担任投资顾问的私募证券投资基金
           </td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">风险收益特征</td>
-          <td><label><input type="radio" name="risk" checked="">R3</label></td>
+          <td class="label">风险收益特征</td>
+          <td><label><input type="radio" name="risk" checked>R3</label></td>
           <td><label><input type="radio" name="risk">R4</label></td>
           <td><label><input type="radio" name="risk">R5</label></td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">投资者风险承受能力</td>
+          <td class="label">投资者风险承受能力</td>
           <td><label><input type="checkbox" name="capacity">C3</label></td>
           <td><label><input type="checkbox" name="capacity">C4</label></td>
           <td><label><input type="checkbox" name="capacity">C5</label></td>
@@ -735,77 +790,77 @@
           <th class="section" colspan="8">产品募集信息</th>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">募集方式</td>
+          <td class="label">募集方式</td>
           <td colspan="3">
-            <label><input type="radio" name="raiseMode" checked="">仅直销</label>
+            <label><input type="radio" name="raiseMode" checked>仅直销</label>
             <label><input type="radio" name="raiseMode">直销+代销</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">代销机构（可填多个）</td>
-          <td colspan="3"><textarea class="line-input" aria-label="代销机构可填多个" value="" style="height: 45px;"></textarea></td>
+          <td class="label">代销机构（可填多个）</td>
+          <td colspan="3"><input class="line-input" type="text" aria-label="代销机构可填多个"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">首次投资最低金额</td>
+          <td class="label">首次投资最低金额</td>
           <td colspan="2">
-            <label><input type="radio" name="firstMin" checked="">100万</label>
-            <label class="has-mini-input"><input type="radio" name="firstMin">其他金额：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】万</label>
+            <label><input type="radio" name="firstMin" checked>100万</label>
+            <label><input type="radio" name="firstMin">其他金额：【<input class="mini-input" type="text">】万</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">追加认购金额</td>
+          <td class="label">追加认购金额</td>
           <td>
-            <label><input type="radio" name="addSub" checked="">1万</label>
+            <label><input type="radio" name="addSub" checked>1万</label>
           </td>
           <td>
             <label><input type="radio" name="addSub">10万</label>
           </td>
           <td colspan="2">
-            <label class="has-mini-input"><input type="radio" name="addSub">其他金额：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】万</label>
+            <label><input type="radio" name="addSub">其他金额：【<input class="mini-input" type="text">】万</label>
           </td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">认购费</td>
+          <td class="label">认购费</td>
           <td colspan="2">
-            <label><input type="radio" name="subFee" checked="">不收取</label>
-            <label class="has-mini-input"><input type="radio" name="subFee">收取：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】%</label>
+            <label><input type="radio" name="subFee" checked>不收取</label>
+            <label><input type="radio" name="subFee">收取：【<input class="mini-input" type="text">】%</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">认购费归属</td>
-          <td colspan="4" class="center" contenteditable="true">募集机构</td>
+          <td class="label">认购费归属</td>
+          <td colspan="4" class="center">募集机构</td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">募集期利息</td>
+          <td class="label">募集期利息</td>
           <td colspan="2">
-            <label><input type="radio" name="interest" checked="">计入基金资产</label>
+            <label><input type="radio" name="interest" checked>计入基金资产</label>
             <label><input type="radio" name="interest">结转为投资者份额</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">是否实施回访制度</td>
+          <td class="label">是否实施回访制度</td>
           <td colspan="4">
-            <label><input type="radio" name="callback" checked="">是（条款组合同表达中核确认）</label>
+            <label><input type="radio" name="callback" checked>是（条款组合同表达中核确认）</label>
             <label><input type="radio" name="callback">否</label>
           </td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">开放日 <span class="note">（周开不可顺延）</span></td>
-          <td colspan="2"><textarea class="line-input" aria-label="开放日" value="" style="height: 45px;"></textarea></td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">锁定期</td>
+          <td class="label">开放日 <span class="note">（周开不可顺延）</span></td>
+          <td colspan="2"><input class="line-input" type="text" aria-label="开放日"></td>
+          <td class="label">锁定期</td>
           <td colspan="4" class="small">
             <label><input type="radio" name="lock">无（需设置阶梯赎回费）</label>
-            <label class="has-mini-input"><input type="radio" name="lock">自份额注册日起不满【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】个月不得赎回，管理人员及员工不得低于6个月</label>
+            <label><input type="radio" name="lock">自份额注册日起不满【<input class="mini-input" type="text">】个月不得赎回，管理人员及员工不得低于6个月</label>
           </td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">申购费</td>
+          <td class="label">申购费</td>
           <td colspan="2">
-            <label><input type="radio" name="buyFee" checked="">不收取</label>
-            <label class="has-mini-input"><input type="radio" name="buyFee">收取：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】%</label>
+            <label><input type="radio" name="buyFee" checked>不收取</label>
+            <label><input type="radio" name="buyFee">收取：【<input class="mini-input" type="text">】%</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">申购费归属</td>
-          <td colspan="4" class="center" contenteditable="true">募集机构</td>
+          <td class="label">申购费归属</td>
+          <td colspan="4" class="center">募集机构</td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">首次申购最低金额</td>
+          <td class="label">首次申购最低金额</td>
           <td colspan="2">
-            <label><input type="radio" name="firstBuy" checked="">100万</label>
-            <label class="has-mini-input"><input type="radio" name="firstBuy">其他金额：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】万</label>
+            <label><input type="radio" name="firstBuy" checked>100万</label>
+            <label><input type="radio" name="firstBuy">其他金额：【<input class="mini-input" type="text">】万</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">追加申购金额</td>
+          <td class="label">追加申购金额</td>
           <td>
             <label><input type="radio" name="addBuy">1万</label>
           </td>
@@ -813,29 +868,29 @@
             <label><input type="radio" name="addBuy">10万</label>
           </td>
           <td colspan="2">
-            <label class="has-mini-input"><input type="radio" name="addBuy">其他金额：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】万</label>
+            <label><input type="radio" name="addBuy">其他金额：【<input class="mini-input" type="text">】万</label>
           </td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">赎回费</td>
+          <td class="label">赎回费</td>
           <td colspan="2">
-            <label><input type="radio" name="redeemFee" value="no" checked="">不收取</label>
-            <label class="has-mini-input"><input type="radio" name="redeemFee" value="yes">收取：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】%</label>
+            <label><input type="radio" name="redeemFee" value="no" checked>不收取</label>
+            <label><input type="radio" name="redeemFee" value="yes">收取</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">赎回费归属</td>
-          <td colspan="4" class="center" contenteditable="true">基金财产</td>
+          <td class="label">赎回费归属</td>
+          <td colspan="4" class="center">基金财产</td>
         </tr>
         <tr>
-          <td class="label redeem-method-disabled locked-help-cell" data-redeem-method="" tabindex="0" aria-describedby="lockedCellTooltip">收费方式（赎回）</td>
-          <td colspan="7" class="small redeem-method-disabled" data-redeem-method="">
-            <label class="has-mini-input"><input type="radio" name="redeemMethod" disabled="">赎回费率：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" disabled="" style="width: 28px; height: 21px;" value=""></textarea>】%</label>
-            <label class="has-mini-input"><input type="radio" name="redeemMethod" checked="" disabled="">分段收取：基金份额持有期限低于【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" disabled="" style="width: 28px; height: 21px;" value=""></textarea>】天的，赎回费率为【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" disabled="" style="width: 28px; height: 21px;" value=""></textarea>】%，基金份额持有期在【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" disabled="" style="width: 28px; height: 21px;" value=""></textarea>】天及以上的，赎回费率为【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" disabled="" style="width: 28px; height: 21px;" value=""></textarea>】%</label>
+          <td class="label">收费方式（赎回）</td>
+          <td colspan="7" class="small" data-redeem-method>
+            <label><input type="radio" name="redeemMethod">赎回费率：【<input class="mini-input" type="text">】%</label>
+            <label><input type="radio" name="redeemMethod" checked>分段收取：基金份额持有期限低于【<input class="mini-input" type="text">】天的，赎回费率为【<input class="mini-input" type="text">】%，基金份额持有期在【<input class="mini-input" type="text">】天及以上的，赎回费率为【<input class="mini-input" type="text">】%</label>
           </td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">巨额赎回认定</td>
+          <td class="label">巨额赎回认定</td>
           <td colspan="7" class="small">
-            单个开放日中，净赎回申请的份额（赎回总份额扣除申购总份额后的余额）超过基金上一日总份额的【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】%时，即认为本基金发生了巨额赎回
+            单个开放日中，净赎回申请的份额（赎回总份额扣除申购总份额后的余额）超过基金上一日总份额的【<input class="mini-input" type="text">】%时，即认为本基金发生了巨额赎回
           </td>
         </tr>
 
@@ -843,188 +898,188 @@
           <th class="section" colspan="8">产品投资信息</th>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">投资目标</td>
-          <td colspan="7" aria-label="投资目标" contenteditable="true"><br></td>
+          <td class="label">投资目标</td>
+          <td colspan="7" aria-label="投资目标"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">投资范围</td>
-          <td colspan="7" aria-label="投资范围" contenteditable="true"><br></td>
+          <td class="label">投资范围</td>
+          <td colspan="7" aria-label="投资范围"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">资产配置比例</td>
-          <td colspan="7" contenteditable="true"><span class="note">注：需与产品类型匹配</span></td>
+          <td class="label">资产配置比例</td>
+          <td colspan="7"><span class="note">注：需与产品类型匹配</span></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">投资策略</td>
-          <td colspan="7" aria-label="投资策略" contenteditable="true"><br></td>
+          <td class="label">投资策略</td>
+          <td colspan="7" aria-label="投资策略"></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">投资限制</td>
-          <td colspan="7" contenteditable="true"><span class="note">注：包含与投资范围匹配的集中度、杠杆等</span></td>
+          <td class="label">投资限制</td>
+          <td colspan="7"><span class="note">注：包含与投资范围匹配的集中度、杠杆等</span></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">投资经理</td>
-          <td colspan="7" contenteditable="true"><span class="note">注：如有多名投资经理的，应当披露设置多名投资经理的合理性、管理方式、分工安排、调整机制等内容</span></td>
+          <td class="label">投资经理</td>
+          <td colspan="7"><span class="note">注：如有多名投资经理的，应当披露设置多名投资经理的合理性、管理方式、分工安排、调整机制等内容</span></td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">业绩比较基准</td>
+          <td class="label">业绩比较基准</td>
           <td colspan="3">
-            <label><input type="radio" name="benchmark" checked="">无</label>
+            <label><input type="radio" name="benchmark" checked>无</label>
             <label><input type="radio" name="benchmark">有：请说明</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">风险控制</td>
-          <td colspan="3" class="center small" contenteditable="true">根据协会指引第二十四条开放式私募证券投资基金原则上不设置预警线、止损线</td>
+          <td class="label">风险控制</td>
+          <td colspan="3" class="center small">根据协会指引第二十四条开放式私募证券投资基金原则上不设置预警线、止损线</td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">关联交易决策机制</td>
-          <td colspan="7" class="small">关联交易投资决策应当经【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" aria-label="关联交易审批机构" value="" style="width: 28px; height: 21px;"></textarea>】审批通过后方可执行。</td>
+          <td class="label">关联交易决策机制</td>
+          <td colspan="7" class="small">关联交易投资决策应当经【<input class="mini-input" type="text" aria-label="关联交易审批机构">】审批通过后方可执行。</td>
         </tr>
 
         <tr>
           <th class="section" colspan="8">产品估值信息</th>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">估值核对时间</td>
+          <td class="label">估值核对时间</td>
           <td colspan="3">
-            <label><input type="radio" name="valuation" checked="">每个交易日</label>
+            <label><input type="radio" name="valuation" checked>每个交易日</label>
             <label><input type="radio" name="valuation">每周/月/季最后一个交易日</label>
             <label><input type="radio" name="valuation">其他</label>
           </td>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">份额净值保留位数</td>
-          <td colspan="3" class="center" contenteditable="true">基金份额净值保留到小数点后4位</td>
+          <td class="label">份额净值保留位数</td>
+          <td colspan="3" class="center">基金份额净值保留到小数点后4位</td>
         </tr>
 
         <tr>
           <th class="section" colspan="8">产品费用信息</th>
         </tr>
         <tr>
-          <td class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">费用类型</td>
-          <td class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">年费率</td>
-          <td colspan="2" class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">支付频率</td>
-          <td class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">费用归属</td>
-          <td class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">是否保底</td>
-          <td colspan="2" class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">支付时间</td>
+          <td class="subhead">费用类型</td>
+          <td class="subhead">年费率</td>
+          <td colspan="2" class="subhead">支付频率</td>
+          <td class="subhead">费用归属</td>
+          <td class="subhead">是否保底</td>
+          <td colspan="2" class="subhead">支付时间</td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">管理费</td>
-          <td class="center">【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】%</td>
-          <td colspan="2" class="center" contenteditable="true">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
-          <td class="center" contenteditable="true">管理人</td>
-          <td class="fee-base"><label class="has-mini-input"><input type="radio" name="mBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】万</span></span></label><label><input type="radio" name="mBase" checked=""><span class="fee-base-text">否</span></label></td>
-          <td colspan="2" class="center fee-pay" contenteditable="true">下个季度初开始，无需出具划拨指令，自行划付</td>
+          <td class="label">管理费</td>
+          <td class="center">【<input class="mini-input" type="text">】%</td>
+          <td colspan="2" class="center">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
+          <td class="center">管理人</td>
+          <td class="fee-base"><label><input type="radio" name="mBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<input class="mini-input" type="text">】万</span></span></label><label><input type="radio" name="mBase" checked><span class="fee-base-text">否</span></label></td>
+          <td colspan="2" class="center fee-pay">下个季度初开始，无需出具划拨指令，自行划付</td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">托管费</td>
-          <td class="center">【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】%</td>
-          <td colspan="2" class="center" contenteditable="true">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
-          <td class="center" contenteditable="true">托管人</td>
-          <td class="fee-base"><label class="has-mini-input"><input type="radio" name="cBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】万</span></span></label><label><input type="radio" name="cBase" checked=""><span class="fee-base-text">否</span></label></td>
-          <td colspan="2" class="center fee-pay" contenteditable="true">下个季度初开始，无需出具划拨指令，自行划付</td>
+          <td class="label">托管费</td>
+          <td class="center">【<input class="mini-input" type="text">】%</td>
+          <td colspan="2" class="center">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
+          <td class="center">托管人</td>
+          <td class="fee-base"><label><input type="radio" name="cBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<input class="mini-input" type="text">】万</span></span></label><label><input type="radio" name="cBase" checked><span class="fee-base-text">否</span></label></td>
+          <td colspan="2" class="center fee-pay">下个季度初开始，无需出具划拨指令，自行划付</td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">基金服务费</td>
-          <td class="center">【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】%</td>
-          <td colspan="2" class="center" contenteditable="true">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
-          <td class="center" contenteditable="true">基金服务商</td>
-          <td class="fee-base"><label class="has-mini-input"><input type="radio" name="sBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】万</span></span></label><label><input type="radio" name="sBase" checked=""><span class="fee-base-text">否</span></label></td>
-          <td colspan="2" class="center fee-pay" contenteditable="true">下个季度初开始，无需出具划拨指令，自行划付</td>
+          <td class="label">基金服务费</td>
+          <td class="center">【<input class="mini-input" type="text">】%</td>
+          <td colspan="2" class="center">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
+          <td class="center">基金服务商</td>
+          <td class="fee-base"><label><input type="radio" name="sBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<input class="mini-input" type="text">】万</span></span></label><label><input type="radio" name="sBase" checked><span class="fee-base-text">否</span></label></td>
+          <td colspan="2" class="center fee-pay">下个季度初开始，无需出具划拨指令，自行划付</td>
         </tr>
         <tr>
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">投资顾问费 <span class="note">（如有）</span></td>
-          <td class="center">【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】%</td>
-          <td colspan="2" class="center" contenteditable="true">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
-          <td class="center" contenteditable="true">投资顾问</td>
-          <td class="fee-base"><label class="has-mini-input"><input type="radio" name="aBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" value="" style="width: 28px; height: 21px;"></textarea>】万</span></span></label><label><input type="radio" name="aBase" checked=""><span class="fee-base-text">否</span></label></td>
-          <td colspan="2" class="center fee-pay" contenteditable="true">下个季度初开始，无需出具划拨指令，自行划付</td>
+          <td class="label">投资顾问费 <span class="note">（如有）</span></td>
+          <td class="center">【<input class="mini-input" type="text">】%</td>
+          <td colspan="2" class="center">每日计提，按季支付（<span class="note">根据实际填写</span>）</td>
+          <td class="center">投资顾问</td>
+          <td class="fee-base"><label><input type="radio" name="aBase"><span class="fee-base-text">是，<span class="fee-base-unit">保底【<input class="mini-input" type="text">】万</span></span></label><label><input type="radio" name="aBase" checked><span class="fee-base-text">否</span></label></td>
+          <td colspan="2" class="center fee-pay">下个季度初开始，无需出具划拨指令，自行划付</td>
         </tr>
         <tr class="tall">
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">业绩报酬</td>
-          <td colspan="7" class="small" contenteditable="true">
+          <td class="label">业绩报酬</td>
+          <td colspan="7" class="small">
             <span class="note">注：</span>1、业绩报酬计提比例不得超过业绩报酬计提基准以上投资收益的60%；<br>
             2、连续两次计提业绩报酬的间隔期不应短于6个月，在投资者赎回基金份额时或在基金清算时计提业绩报酬的，可以不受前述间隔期的限制。
           </td>
         </tr>
         <tr>
-          <td class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">是否收取</td>
-          <td class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">计提方式</td>
-          <td colspan="2" class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">计提时点</td>
-          <td colspan="2" class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">计提基准</td>
-          <td colspan="2" class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">计提比例</td>
+          <td class="subhead">是否收取</td>
+          <td class="subhead">计提方式</td>
+          <td colspan="2" class="subhead">计提时点</td>
+          <td colspan="2" class="subhead">计提基准</td>
+          <td colspan="2" class="subhead">计提比例</td>
         </tr>
         <tr>
           <td rowspan="4" class="performance-choice">
-            <label><input type="radio" name="performance" checked="">收取（需填写后方）</label><br>
+            <label><input type="radio" name="performance" checked>收取（需填写后方）</label><br>
             <label><input type="radio" name="performance">不收取</label>
           </td>
-          <td contenteditable="true">单人单笔份额高水位法</td>
+          <td>单人单笔份额高水位法</td>
           <td colspan="2">
-            <label><input type="checkbox" checked="">赎回日</label>
-            <label><input type="checkbox" checked="">分红日</label>
-            <label><input type="checkbox" checked="">终止日</label>
+            <label><input type="checkbox" checked>赎回日</label>
+            <label><input type="checkbox" checked>分红日</label>
+            <label><input type="checkbox" checked>终止日</label>
           </td>
           <td colspan="2">
-            <label class="has-mini-input"><input type="radio" name="base1" checked="">有：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" aria-label="计提基准1" value="" style="width: 28px; height: 21px;"></textarea>】</label>
+            <label><input type="radio" name="base1" checked>有：【<input class="mini-input" type="text" aria-label="计提基准1">】</label>
             <label><input type="radio" name="base1">无</label>
           </td>
-          <td colspan="2"><textarea class="line-input" aria-label="计提比例1" value="" style="height: 45px;"></textarea></td>
+          <td colspan="2"><input class="line-input" type="text" aria-label="计提比例1"></td>
         </tr>
         <tr>
-          <td contenteditable="true">单人单笔份额年化收益率法</td>
+          <td>单人单笔份额年化收益率法</td>
           <td colspan="2">
             <label><input type="checkbox">赎回日</label>
             <label><input type="checkbox">分红日</label>
             <label><input type="checkbox">终止日</label>
           </td>
           <td colspan="2">
-            <label class="has-mini-input"><input type="radio" name="base2">有：【<textarea class="mini-input" placeholder="" rows="1" wrap="soft" aria-label="计提基准2" value="" style="width: 28px; height: 21px;"></textarea>】</label>
+            <label><input type="radio" name="base2">有：【<input class="mini-input" type="text" aria-label="计提基准2">】</label>
             <label><input type="radio" name="base2">无</label>
           </td>
-          <td colspan="2"><textarea class="line-input" aria-label="计提比例2" value="" style="height: 45px;"></textarea></td>
+          <td colspan="2"><input class="line-input" type="text" aria-label="计提比例2"></td>
         </tr>
         <tr>
-          <td class="fill" contenteditable="true"><br></td>
-          <td colspan="2" contenteditable="true"><br></td>
-          <td colspan="2" contenteditable="true"><br></td>
-          <td colspan="2" contenteditable="true"><br></td>
+          <td class="fill"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
         </tr>
         <tr>
-          <td class="fill" contenteditable="true"><br></td>
-          <td colspan="2" contenteditable="true"><br></td>
-          <td colspan="2" contenteditable="true"><br></td>
-          <td colspan="2" contenteditable="true"><br></td>
+          <td class="fill"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
+          <td colspan="2"></td>
         </tr>
         <tr class="xl">
-          <td class="label locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">收益分配 <span class="note">（管理人确认）</span></td>
+          <td class="label">收益分配 <span class="note">（管理人确认）</span></td>
           <td colspan="7" class="small">
-            <span class="note">注：</span>1、收益分配方式为现金分红或红利再投资两种方式，默认为【<textarea class="mini-input distribution-default-input" placeholder="" rows="1" wrap="soft" aria-label="默认收益分配方式" value="现金分红" style="width: 40px; height: 21px;">现金分红</textarea>】<span class="note">（请管理人确认）</span>；<br>
+            <span class="note">注：</span>1、收益分配方式为现金分红或红利再投资两种方式，默认为【<input class="mini-input distribution-default-input" type="text" value="现金分红" aria-label="默认收益分配方式">】<span class="note">（请管理人确认）</span>；<br>
             2、基金收益分配后基金份额净值不能低于面值；即基金收益分配基准日的基金份额净值减去每单位基金份额收益分配金额后不能低于面值；<br>
             3、对于红利再投资份额视作在红利再投日新增申购份额（不收取申购费），该新增申购份额适用于本合同约定的基金份额不允许赎回期限（<span class="note">如有</span>）限制及按照本合同约定收取赎回费（<span class="note">如有</span>）。
           </td>
         </tr>
         <tr>
-          <td class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">是否分配</td>
-          <td class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">分配方式</td>
-          <td colspan="4" class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">分配基准日及比例</td>
-          <td colspan="2" class="subhead locked-help-cell" tabindex="0" aria-describedby="lockedCellTooltip">分配次数</td>
+          <td class="subhead">是否分配</td>
+          <td class="subhead">分配方式</td>
+          <td colspan="4" class="subhead">分配基准日及比例</td>
+          <td colspan="2" class="subhead">分配次数</td>
         </tr>
         <tr class="tall">
           <td class="center">
-            <label><input type="radio" name="distribution" value="yes" checked="">是</label>
+            <label><input type="radio" name="distribution" value="yes" checked>是</label>
             <label><input type="radio" name="distribution" value="no">否</label>
           </td>
-          <td data-distribution-detail="">
-            <label><input type="radio" name="distributionType" value="现金分红" checked="">现金分红</label><br>
+          <td data-distribution-detail>
+            <label><input type="radio" name="distributionType" value="现金分红" checked>现金分红</label><br>
             <label><input type="radio" name="distributionType" value="红利再投资">红利再投资</label>
           </td>
-          <td colspan="4" class="center" data-distribution-detail="" contenteditable="true">管理人自行决定</td>
-          <td colspan="2" class="center" data-distribution-detail="" contenteditable="true">2次</td>
+          <td colspan="4" class="center" data-distribution-detail>管理人自行决定</td>
+          <td colspan="2" class="center" data-distribution-detail>2次</td>
         </tr>
-      </tbody></table>
+      </table>
       </div>
       </div>
     </form>
   </div>
-  <div class="cell-tooltip" id="lockedCellTooltip" role="tooltip" style="left: 993px; top: 668px;" hidden="">存续期限：这是固定字段名，不需要修改；请在后面或右侧对应的空白格填写。</div>
+  <div class="cell-tooltip" id="lockedCellTooltip" role="tooltip" hidden></div>
   <script>
     const saveHtmlButton = document.getElementById("saveHtmlButton");
     const saveAsHtmlButton = document.getElementById("saveAsHtmlButton");
@@ -1035,6 +1090,11 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
     const minSheetZoom = 1;
     const maxSheetZoom = 3;
     const pinchActivationDistance = 4;
+    const fileHandleDatabaseName = "product-form-file-handle";
+    const fileHandleStoreName = "settings";
+    const fileHandleStorageKey = "html-file-handle";
+    let htmlFileHandle = null;
+    const htmlFileHandleReady = restoreHtmlFileHandle();
     let sheetZoom = 1;
     let pinchStartDistance = 0;
     let pinchStartZoom = 1;
@@ -1215,8 +1275,120 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       clearUnsavedChanges();
     }
 
-    function saveCurrentHtml() {
-      downloadHtml(createHtmlSnapshot(), createDefaultHtmlFileName());
+    function openFileHandleDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(fileHandleDatabaseName, 1);
+
+        request.onupgradeneeded = () => {
+          if (!request.result.objectStoreNames.contains(fileHandleStoreName)) {
+            request.result.createObjectStore(fileHandleStoreName);
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function restoreHtmlFileHandle() {
+      if (!window.indexedDB) {
+        return;
+      }
+
+      let database;
+
+      try {
+        database = await openFileHandleDatabase();
+        const request = database
+          .transaction(fileHandleStoreName, "readonly")
+          .objectStore(fileHandleStoreName)
+          .get(fileHandleStorageKey);
+        const storedFileHandle = await new Promise((resolve, reject) => {
+          request.onsuccess = () => resolve(request.result ?? null);
+          request.onerror = () => reject(request.error);
+        });
+
+        if (!htmlFileHandle) {
+          htmlFileHandle = storedFileHandle;
+        }
+      } catch (error) {
+        console.warn("无法恢复上次保存的文件：", error);
+      } finally {
+        database?.close();
+      }
+    }
+
+    async function persistHtmlFileHandle(fileHandle) {
+      if (!window.indexedDB) {
+        return;
+      }
+
+      let database;
+
+      try {
+        database = await openFileHandleDatabase();
+        await new Promise((resolve, reject) => {
+          const transaction = database.transaction(fileHandleStoreName, "readwrite");
+
+          transaction.oncomplete = () => resolve();
+          transaction.onerror = () => reject(transaction.error);
+          transaction.onabort = () => reject(transaction.error);
+          transaction.objectStore(fileHandleStoreName).put(fileHandle, fileHandleStorageKey);
+        });
+      } catch (error) {
+        console.warn("无法记住本次保存的文件：", error);
+      } finally {
+        database?.close();
+      }
+    }
+
+    async function ensureHtmlFileWritePermission(fileHandle) {
+      const options = { mode: "readwrite" };
+
+      if (!fileHandle.queryPermission || !fileHandle.requestPermission) {
+        return true;
+      }
+
+      if (await fileHandle.queryPermission(options) === "granted") {
+        return true;
+      }
+
+      return await fileHandle.requestPermission(options) === "granted";
+    }
+
+    async function writeHtmlFile(fileHandle, html) {
+      const writable = await fileHandle.createWritable();
+
+      await writable.write(new Blob([html], { type: "text/html;charset=utf-8" }));
+      await writable.close();
+      clearUnsavedChanges();
+    }
+
+    async function saveCurrentHtml() {
+      if (!window.showSaveFilePicker) {
+        downloadHtml(createHtmlSnapshot(), createDefaultHtmlFileName());
+        return;
+      }
+
+      await htmlFileHandleReady;
+
+      if (!htmlFileHandle) {
+        await saveAsCurrentHtml();
+        return;
+      }
+
+      try {
+        if (!await ensureHtmlFileWritePermission(htmlFileHandle)) {
+          alert("未获得原文件的写入权限，本次未保存。请重新点击“保存HTML”授权，或使用“另存为”。");
+          return;
+        }
+
+        await writeHtmlFile(htmlFileHandle, createHtmlSnapshot());
+      } catch (error) {
+        console.error(error);
+        htmlFileHandle = null;
+        await persistHtmlFileHandle(null);
+        await saveAsCurrentHtml();
+      }
     }
 
     async function saveAsCurrentHtml() {
@@ -1238,11 +1410,9 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
             },
           ],
         });
-        const writable = await fileHandle.createWritable();
-
-        await writable.write(new Blob([html], { type: "text/html;charset=utf-8" }));
-        await writable.close();
-        clearUnsavedChanges();
+        await writeHtmlFile(fileHandle, html);
+        htmlFileHandle = fileHandle;
+        await persistHtmlFileHandle(fileHandle);
       } catch (error) {
         if (error.name === "AbortError") {
           return;
@@ -1638,6 +1808,5 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       });
     });
   </script>
-
-
-</body></html>
+</body>
+</html>
