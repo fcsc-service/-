@@ -1102,6 +1102,8 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
     let pinchStartScroll = null;
     let isSheetPinching = false;
     let hasUnsavedChanges = false;
+    let isSavingHtml = false;
+    let saveAgainWhenDone = false;
 
     function markUnsavedChanges() {
       hasUnsavedChanges = true;
@@ -1356,14 +1358,44 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
     }
 
     async function writeHtmlFile(fileHandle, html) {
+      if (!html) {
+        throw new Error("要保存的内容为空，已取消写入。");
+      }
+
       const writable = await fileHandle.createWritable();
 
-      await writable.write(new Blob([html], { type: "text/html;charset=utf-8" }));
-      await writable.close();
+      try {
+        await writable.write(new Blob([html], { type: "text/html;charset=utf-8" }));
+        await writable.close();
+      } catch (error) {
+        await writable.abort();
+        throw error;
+      }
+
       clearUnsavedChanges();
     }
 
     async function saveCurrentHtml() {
+      if (isSavingHtml) {
+        saveAgainWhenDone = true;
+        return;
+      }
+
+      isSavingHtml = true;
+
+      try {
+        await saveCurrentHtmlInner();
+      } finally {
+        isSavingHtml = false;
+      }
+
+      if (saveAgainWhenDone) {
+        saveAgainWhenDone = false;
+        saveCurrentHtml();
+      }
+    }
+
+    async function saveCurrentHtmlInner() {
       if (!window.showSaveFilePicker) {
         downloadHtml(createHtmlSnapshot(), createDefaultHtmlFileName());
         return;
