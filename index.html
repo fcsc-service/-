@@ -1271,7 +1271,7 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       return `product-form-${timestamp}.html`;
     }
 
-    function downloadHtml(html, fileName) {
+    function downloadHtml(html, fileName, reason) {
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });
       const link = document.createElement("a");
       const objectUrl = URL.createObjectURL(blob);
@@ -1282,11 +1282,32 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-      alert("浏览器已发起下载。请确认下载列表中显示完成，并妥善保留文件；页面无法自动验证下载结果。");
+      alert(`${reason || "当前浏览器不支持直接覆盖本地文件，"}已发起下载保存。请在下载列表中确认完成；下载文件不会自动覆盖原文件，页面也无法自动验证下载结果。`);
     }
 
     function supportsDirectFileSave() {
       return typeof window.showSaveFilePicker === "function";
+    }
+
+    function isDirectFileSaveUnavailable(error) {
+      if (["NotSupportedError", "TypeError"].includes(error?.name)) {
+        return true;
+      }
+
+      return /showSaveFilePicker|createWritable|FileSystemWritable|not supported/i.test(error?.message || "");
+    }
+
+    async function saveWithDownloadFallback(directSave, html, fileName) {
+      try {
+        await directSave();
+      } catch (error) {
+        if (!isDirectFileSaveUnavailable(error)) {
+          throw error;
+        }
+
+        htmlFileHandle = null;
+        downloadHtml(html, fileName, "当前浏览器无法直接覆盖本地文件，");
+      }
     }
 
     function setSaveButtonsBusy(isBusy) {
@@ -1402,8 +1423,8 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       clearUnsavedChanges(savedRevision);
     }
 
-    async function chooseAndWriteHtmlFile(html, fileName, savedRevision) {
-      const fileHandle = await window.showSaveFilePicker({
+    function chooseHtmlFileHandle(fileName) {
+      return window.showSaveFilePicker({
         suggestedName: fileName,
         types: [
           {
@@ -1412,11 +1433,15 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
           },
         ],
       });
+    }
+
+    async function chooseAndWriteHtmlFile(html, fileName, savedRevision) {
+      const fileHandle = await chooseHtmlFileHandle(fileName);
       await writeHtmlFile(fileHandle, html, savedRevision);
       htmlFileHandle = fileHandle;
     }
 
-    async function saveCurrentHtmlInner() {
+    async function saveCurrentHtmlInner(selectedFileHandle) {
       const savedRevision = changeRevision;
       const html = createHtmlSnapshot();
       const fileName = createDefaultHtmlFileName();
@@ -1426,20 +1451,23 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
         return;
       }
 
-      if (!htmlFileHandle) {
-        await chooseAndWriteHtmlFile(html, fileName, savedRevision);
-        return;
-      }
+      await saveWithDownloadFallback(async () => {
+        const fileHandle = selectedFileHandle || htmlFileHandle;
+        if (!fileHandle) {
+          throw new Error("未选择保存位置，本次未保存。");
+        }
 
-      if (!await ensureHtmlFileWritePermission(htmlFileHandle)) {
-        htmlFileHandle = null;
-        throw new Error("未获得当前目标文件的写入权限，本次未保存。请重新选择保存位置。");
-      }
+        if (!await ensureHtmlFileWritePermission(fileHandle)) {
+          htmlFileHandle = null;
+          throw new Error("未获得当前目标文件的写入权限，本次未保存。请重新选择保存位置。");
+        }
 
-      await writeHtmlFile(htmlFileHandle, html, savedRevision);
+        await writeHtmlFile(fileHandle, html, savedRevision);
+        htmlFileHandle = fileHandle;
+      }, html, fileName);
     }
 
-    async function saveAsCurrentHtmlInner() {
+    async function saveAsCurrentHtmlInner(selectedFileHandle) {
       const savedRevision = changeRevision;
       const html = createHtmlSnapshot();
       const fileName = createDefaultHtmlFileName();
@@ -1449,7 +1477,14 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
         return;
       }
 
-      await chooseAndWriteHtmlFile(html, fileName, savedRevision);
+      await saveWithDownloadFallback(async () => {
+        if (!selectedFileHandle) {
+          throw new Error("未选择保存位置，本次未保存。");
+        }
+
+        await writeHtmlFile(selectedFileHandle, html, savedRevision);
+        htmlFileHandle = selectedFileHandle;
+      }, html, fileName);
     }
 
     function reportSaveError(error) {
@@ -1460,12 +1495,46 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       alert("保存失败，页面内容仍标记为未保存：" + (error?.message || error));
     }
 
+    function enqueueSelectedFileSave(saveTask, shouldChooseFile) {
+      if (!supportsDirectFileSave() || !shouldChooseFile) {
+        return enqueueSave(saveTask).catch(reportSaveError);
+      }
+
+      let selectedFileHandlePromise;
+      try {
+        // 文件选择器必须在点击事件中立刻打开，避免部分浏览器丢失用户手势后拒绝保存。
+        selectedFileHandlePromise = chooseHtmlFileHandle(createDefaultHtmlFileName());
+      } catch (error) {
+        selectedFileHandlePromise = Promise.reject(error);
+      }
+
+      setSaveButtonsBusy(true);
+      return selectedFileHandlePromise
+        .then((fileHandle) => enqueueSave(() => saveTask(fileHandle)))
+        .catch((error) => {
+          if (isDirectFileSaveUnavailable(error)) {
+            downloadHtml(
+              createHtmlSnapshot(),
+              createDefaultHtmlFileName(),
+              "当前浏览器无法打开可写文件选择器，",
+            );
+            return;
+          }
+          reportSaveError(error);
+        })
+        .finally(() => {
+          if (pendingSaveCount === 0) {
+            setSaveButtonsBusy(false);
+          }
+        });
+    }
+
     function saveCurrentHtml() {
-      return enqueueSave(saveCurrentHtmlInner).catch(reportSaveError);
+      return enqueueSelectedFileSave(saveCurrentHtmlInner, !htmlFileHandle);
     }
 
     function saveAsCurrentHtml() {
-      return enqueueSave(saveAsCurrentHtmlInner).catch(reportSaveError);
+      return enqueueSelectedFileSave(saveAsCurrentHtmlInner, true);
     }
 
     saveHtmlButton?.addEventListener("click", saveCurrentHtml);
