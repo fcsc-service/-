@@ -94,6 +94,13 @@
       transform: translateY(0);
     }
 
+    .save-button:disabled {
+      opacity: .62;
+      cursor: wait;
+      transform: none;
+      box-shadow: none;
+    }
+
     .save-button.secondary {
       border-color: var(--line-strong);
       background: var(--surface-soft);
@@ -1090,11 +1097,7 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
     const minSheetZoom = 1;
     const maxSheetZoom = 3;
     const pinchActivationDistance = 4;
-    const fileHandleDatabaseName = "product-form-file-handle";
-    const fileHandleStoreName = "settings";
-    const fileHandleStorageKey = "html-file-handle";
     let htmlFileHandle = null;
-    const htmlFileHandleReady = restoreHtmlFileHandle();
     let sheetZoom = 1;
     let pinchStartDistance = 0;
     let pinchStartZoom = 1;
@@ -1102,15 +1105,19 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
     let pinchStartScroll = null;
     let isSheetPinching = false;
     let hasUnsavedChanges = false;
-    let isSavingHtml = false;
-    let saveAgainWhenDone = false;
+    let changeRevision = 0;
+    let saveQueue = Promise.resolve();
+    let pendingSaveCount = 0;
 
     function markUnsavedChanges() {
+      changeRevision += 1;
       hasUnsavedChanges = true;
     }
 
-    function clearUnsavedChanges() {
-      hasUnsavedChanges = false;
+    function clearUnsavedChanges(savedRevision) {
+      if (changeRevision === savedRevision) {
+        hasUnsavedChanges = false;
+      }
     }
 
     window.addEventListener("beforeunload", (event) => {
@@ -1267,80 +1274,40 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
     function downloadHtml(html, fileName) {
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });
       const link = document.createElement("a");
+      const objectUrl = URL.createObjectURL(blob);
 
-      link.href = URL.createObjectURL(blob);
+      link.href = objectUrl;
       link.download = fileName;
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(link.href);
-      clearUnsavedChanges();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      alert("浏览器已发起下载。请确认下载列表中显示完成，并妥善保留文件；页面无法自动验证下载结果。");
     }
 
-    function openFileHandleDatabase() {
-      return new Promise((resolve, reject) => {
-        const request = indexedDB.open(fileHandleDatabaseName, 1);
+    function supportsDirectFileSave() {
+      return typeof window.showSaveFilePicker === "function";
+    }
 
-        request.onupgradeneeded = () => {
-          if (!request.result.objectStoreNames.contains(fileHandleStoreName)) {
-            request.result.createObjectStore(fileHandleStoreName);
-          }
-        };
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
+    function setSaveButtonsBusy(isBusy) {
+      [saveHtmlButton, saveAsHtmlButton].forEach((button) => {
+        if (button) {
+          button.disabled = isBusy;
+        }
       });
     }
 
-    async function restoreHtmlFileHandle() {
-      if (!window.indexedDB) {
-        return;
-      }
+    function enqueueSave(task) {
+      pendingSaveCount += 1;
+      setSaveButtonsBusy(true);
 
-      let database;
+      const queuedTask = saveQueue.then(task, task);
+      saveQueue = queuedTask.catch(() => {});
 
-      try {
-        database = await openFileHandleDatabase();
-        const request = database
-          .transaction(fileHandleStoreName, "readonly")
-          .objectStore(fileHandleStoreName)
-          .get(fileHandleStorageKey);
-        const storedFileHandle = await new Promise((resolve, reject) => {
-          request.onsuccess = () => resolve(request.result ?? null);
-          request.onerror = () => reject(request.error);
-        });
-
-        if (!htmlFileHandle) {
-          htmlFileHandle = storedFileHandle;
-        }
-      } catch (error) {
-        console.warn("无法恢复上次保存的文件：", error);
-      } finally {
-        database?.close();
-      }
-    }
-
-    async function persistHtmlFileHandle(fileHandle) {
-      if (!window.indexedDB) {
-        return;
-      }
-
-      let database;
-
-      try {
-        database = await openFileHandleDatabase();
-        await new Promise((resolve, reject) => {
-          const transaction = database.transaction(fileHandleStoreName, "readwrite");
-
-          transaction.oncomplete = () => resolve();
-          transaction.onerror = () => reject(transaction.error);
-          transaction.onabort = () => reject(transaction.error);
-          transaction.objectStore(fileHandleStoreName).put(fileHandle, fileHandleStorageKey);
-        });
-      } catch (error) {
-        console.warn("无法记住本次保存的文件：", error);
-      } finally {
-        database?.close();
-      }
+      return queuedTask.finally(() => {
+        pendingSaveCount -= 1;
+        setSaveButtonsBusy(pendingSaveCount > 0);
+      });
     }
 
     async function ensureHtmlFileWritePermission(fileHandle) {
@@ -1357,102 +1324,148 @@ const lockedCellTooltip = document.getElementById("lockedCellTooltip");
       return await fileHandle.requestPermission(options) === "granted";
     }
 
-    async function writeHtmlFile(fileHandle, html) {
+    async function createBlobDigest(blob) {
+      const bytes = new Uint8Array(await blob.arrayBuffer());
+
+      if (window.crypto?.subtle) {
+        const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+        return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+      }
+
+      let hash = 2166136261;
+      for (const byte of bytes) {
+        hash ^= byte;
+        hash = Math.imul(hash, 16777619);
+      }
+      return `${bytes.length}:${hash >>> 0}`;
+    }
+
+    async function verifyWrittenFile(fileHandle, expectedBlob) {
+      const writtenFile = await fileHandle.getFile();
+      if (writtenFile.size !== expectedBlob.size) {
+        throw new Error(`文件大小不一致（应为 ${expectedBlob.size} 字节，实际为 ${writtenFile.size} 字节）。`);
+      }
+
+      const [expectedDigest, writtenDigest] = await Promise.all([
+        createBlobDigest(expectedBlob),
+        createBlobDigest(writtenFile),
+      ]);
+      if (expectedDigest !== writtenDigest) {
+        throw new Error("文件内容摘要不一致，磁盘内容不完整。");
+      }
+    }
+
+    async function replaceFileContents(fileHandle, blob) {
+      const writable = await fileHandle.createWritable({ keepExistingData: true });
+      let closed = false;
+
+      try {
+        await writable.write(blob);
+        await writable.truncate(blob.size);
+        await writable.close();
+        closed = true;
+      } catch (error) {
+        if (!closed) {
+          try {
+            await writable.abort();
+          } catch (abortError) {
+            console.error("终止写入失败：", abortError);
+          }
+        }
+        throw error;
+      }
+    }
+
+    async function writeHtmlFile(fileHandle, html, savedRevision) {
       if (!html) {
         throw new Error("要保存的内容为空，已取消写入。");
       }
 
-      const writable = await fileHandle.createWritable();
+      const newBlob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const originalFile = await fileHandle.getFile();
+      const originalBlob = originalFile.slice(0, originalFile.size, originalFile.type);
+
+      await replaceFileContents(fileHandle, newBlob);
 
       try {
-        await writable.write(new Blob([html], { type: "text/html;charset=utf-8" }));
-        await writable.close();
-      } catch (error) {
-        await writable.abort();
-        throw error;
+        await verifyWrittenFile(fileHandle, newBlob);
+      } catch (verificationError) {
+        try {
+          await replaceFileContents(fileHandle, originalBlob);
+          await verifyWrittenFile(fileHandle, originalBlob);
+        } catch (restoreError) {
+          throw new Error(`保存校验失败且原文件恢复失败：${verificationError.message}；${restoreError.message}`);
+        }
+        throw new Error(`保存校验失败，已恢复原文件：${verificationError.message}`);
       }
 
-      clearUnsavedChanges();
+      clearUnsavedChanges(savedRevision);
     }
 
-    async function saveCurrentHtml() {
-      if (isSavingHtml) {
-        saveAgainWhenDone = true;
-        return;
-      }
-
-      isSavingHtml = true;
-
-      try {
-        await saveCurrentHtmlInner();
-      } finally {
-        isSavingHtml = false;
-      }
-
-      if (saveAgainWhenDone) {
-        saveAgainWhenDone = false;
-        saveCurrentHtml();
-      }
+    async function chooseAndWriteHtmlFile(html, fileName, savedRevision) {
+      const fileHandle = await window.showSaveFilePicker({
+        suggestedName: fileName,
+        types: [
+          {
+            description: "HTML 文件",
+            accept: { "text/html": [".html", ".htm"] },
+          },
+        ],
+      });
+      await writeHtmlFile(fileHandle, html, savedRevision);
+      htmlFileHandle = fileHandle;
     }
 
     async function saveCurrentHtmlInner() {
-      if (!window.showSaveFilePicker) {
-        downloadHtml(createHtmlSnapshot(), createDefaultHtmlFileName());
-        return;
-      }
-
-      await htmlFileHandleReady;
-
-      if (!htmlFileHandle) {
-        await saveAsCurrentHtml();
-        return;
-      }
-
-      try {
-        if (!await ensureHtmlFileWritePermission(htmlFileHandle)) {
-          alert("未获得原文件的写入权限，本次未保存。请重新点击“保存HTML”授权，或使用“另存为”。");
-          return;
-        }
-
-        await writeHtmlFile(htmlFileHandle, createHtmlSnapshot());
-      } catch (error) {
-        console.error(error);
-        htmlFileHandle = null;
-        await persistHtmlFileHandle(null);
-        await saveAsCurrentHtml();
-      }
-    }
-
-    async function saveAsCurrentHtml() {
+      const savedRevision = changeRevision;
       const html = createHtmlSnapshot();
       const fileName = createDefaultHtmlFileName();
 
-      if (!window.showSaveFilePicker) {
+      if (!supportsDirectFileSave()) {
         downloadHtml(html, fileName);
         return;
       }
 
-      try {
-        const fileHandle = await window.showSaveFilePicker({
-          suggestedName: fileName,
-          types: [
-            {
-              description: "HTML 文件",
-              accept: { "text/html": [".html", ".htm"] },
-            },
-          ],
-        });
-        await writeHtmlFile(fileHandle, html);
-        htmlFileHandle = fileHandle;
-        await persistHtmlFileHandle(fileHandle);
-      } catch (error) {
-        if (error.name === "AbortError") {
-          return;
-        }
-
-        console.error(error);
-        downloadHtml(html, fileName);
+      if (!htmlFileHandle) {
+        await chooseAndWriteHtmlFile(html, fileName, savedRevision);
+        return;
       }
+
+      if (!await ensureHtmlFileWritePermission(htmlFileHandle)) {
+        htmlFileHandle = null;
+        throw new Error("未获得当前目标文件的写入权限，本次未保存。请重新选择保存位置。");
+      }
+
+      await writeHtmlFile(htmlFileHandle, html, savedRevision);
+    }
+
+    async function saveAsCurrentHtmlInner() {
+      const savedRevision = changeRevision;
+      const html = createHtmlSnapshot();
+      const fileName = createDefaultHtmlFileName();
+
+      if (!supportsDirectFileSave()) {
+        downloadHtml(html, fileName);
+        return;
+      }
+
+      await chooseAndWriteHtmlFile(html, fileName, savedRevision);
+    }
+
+    function reportSaveError(error) {
+      if (error?.name === "AbortError") {
+        return;
+      }
+      console.error(error);
+      alert("保存失败，页面内容仍标记为未保存：" + (error?.message || error));
+    }
+
+    function saveCurrentHtml() {
+      return enqueueSave(saveCurrentHtmlInner).catch(reportSaveError);
+    }
+
+    function saveAsCurrentHtml() {
+      return enqueueSave(saveAsCurrentHtmlInner).catch(reportSaveError);
     }
 
     saveHtmlButton?.addEventListener("click", saveCurrentHtml);
